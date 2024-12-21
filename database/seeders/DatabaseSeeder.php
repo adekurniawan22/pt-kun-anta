@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        // Seed "pengguna" table
+        // DATA PENGGUNA
         DB::table('pengguna')->insert([
             [
                 'nama' => 'Fajar Rusdianto',
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        // Menambahkan 10 supplier
+        // DATA SUPPLIER
         for ($i = 0; $i < 10; $i++) {
             $kontakSupplier = '628' . str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
 
@@ -51,8 +51,8 @@ class DatabaseSeeder extends Seeder
             $bahanBaku = json_encode(array_values($bahanBakuArray));
 
             DB::table('supplier')->insert([
-                'nama_supplier' => 'Supplier ' . Str::random(5),
-                'alamat_supplier' => 'Alamat ' . Str::random(10),
+                'nama_supplier' => $this->namaPerusahaan[$i],
+                'alamat_supplier' => $this->alamat[$i],
                 'kontak_supplier' => $kontakSupplier,
                 'bahan_baku' => $bahanBaku,
                 'dibuat_oleh' => 1,
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Daftar nama bahan baku untuk perusahaan makanan
+        // DATA BAHAN BAKU
         $bahanBakuNames = [
             'Gula Pasir',
             'Tepung Terigu',
@@ -75,13 +75,9 @@ class DatabaseSeeder extends Seeder
             'Vanili Bubuk',
             'Pasir',
         ];
-
-        // Menambahkan bahan baku ke dalam tabel
         foreach ($bahanBakuNames as $index => $namaBahanBaku) {
-            // Membuat kode_bahan_baku dengan format BB-XXYY-001
             $words = explode(' ', $namaBahanBaku);
             $kodeNama = '';
-
             foreach ($words as $word) {
                 if (strlen($word) >= 2) {
                     $kodeNama .= substr($word, 0, 2);
@@ -89,10 +85,8 @@ class DatabaseSeeder extends Seeder
                     $kodeNama .= $word[0];
                 }
             }
-
             $id = str_pad($index + 1, 3, '0', STR_PAD_LEFT);
             $kodeBahanBaku = 'BB-' . strtoupper($kodeNama) . '-' . $id;
-
             DB::table('bahan_baku')->insert([
                 'kode_bahan_baku' => $kodeBahanBaku,
                 'nama_bahan_baku' => $namaBahanBaku,
@@ -105,57 +99,63 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Menambahkan data 11 bulan transaksi bahan baku
-        $bahanBaku = DB::table('bahan_baku')->pluck('harga_per_satuan', 'bahan_baku_id')->toArray();
+        // Ambil semua ID bahan baku yang tersedia
+        $bahanBakuIds = DB::table('bahan_baku')->pluck('bahan_baku_id')->toArray();
         $penggunaIds = DB::table('pengguna')->pluck('pengguna_id')->toArray();
-
-        // Simpan daftar bahan baku yang pernah masuk
         $bahanBakuMasuk = [];
 
         for ($month = 1; $month <= 11; $month++) {
             $startDate = Carbon::create(2024, $month, 1);
-            $jumlahMasuk = rand(500, 1000);
+            $bulanIndonesia = $this->bulanIndonesia[$startDate->format('F')];
 
             // Pilih bahan baku secara acak
-            $selectedBahanBakuId = array_rand($bahanBaku);
-            $selectedHargaPerSatuan = $bahanBaku[$selectedBahanBakuId];
+            $selectedBahanBakuId = $bahanBakuIds[array_rand($bahanBakuIds)];
+            $jumlahMasuk = rand(500, 1000);
+            $hargaPerSatuan = rand(10000, 50000); // Harga per satuan ditentukan saat transaksi masuk
+
+            // Catat bahwa bahan baku ini sudah memiliki transaksi masuk
             $bahanBakuMasuk[$selectedBahanBakuId] = true;
 
-            // Membuat transaksi masuk di awal bulan
+            // Insert transaksi masuk
             DB::table('bahan_baku_transaksi')->insert([
                 'bahan_baku_id' => $selectedBahanBakuId,
                 'tipe' => 'masuk',
                 'tanggal_transaksi' => $startDate->format('Y-m-d'),
                 'jumlah' => $jumlahMasuk,
-                'total' => $jumlahMasuk * $selectedHargaPerSatuan,
-                'keterangan' => 'Transaksi masuk awal bulan ' . $startDate->format('F Y'),
+                'total' => $jumlahMasuk * $hargaPerSatuan,
+                'keterangan' => "Transaksi masuk awal bulan {$bulanIndonesia} {$startDate->format('Y')}",
                 'supplier_id' => rand(1, 9),
                 'dibuat_oleh' => $penggunaIds[array_rand($penggunaIds)],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
+            // Update harga_per_satuan di tabel bahan_baku
+            DB::table('bahan_baku')
+                ->where('bahan_baku_id', $selectedBahanBakuId)
+                ->update([
+                    'harga_per_satuan' => $hargaPerSatuan
+                ]);
+
+            // Generate transaksi keluar
             $outTransactionsCount = rand(2, 5);
             $totalKeluar = 0;
 
             for ($i = 0; $i < $outTransactionsCount; $i++) {
                 if ($totalKeluar >= $jumlahMasuk) break;
 
-                // Pilih bahan baku yang pernah masuk
+                // Hanya gunakan bahan baku yang sudah memiliki transaksi masuk
                 $validBahanBakuIds = array_keys($bahanBakuMasuk);
                 $selectedKeluarBahanBakuId = $validBahanBakuIds[array_rand($validBahanBakuIds)];
-                $selectedKeluarHargaPerSatuan = $bahanBaku[$selectedKeluarBahanBakuId];
 
                 $jumlahKeluar = rand(1, min(50, $jumlahMasuk - $totalKeluar));
-
-                // Tambahkan transaksi keluar
                 DB::table('bahan_baku_transaksi')->insert([
                     'bahan_baku_id' => $selectedKeluarBahanBakuId,
                     'tipe' => 'keluar',
                     'tanggal_transaksi' => $startDate->format('Y-m-d'),
                     'jumlah' => $jumlahKeluar,
                     'total' => null,
-                    'keterangan' => 'Transaksi keluar bulan ' . $startDate->format('F Y'),
+                    'keterangan' => "Transaksi keluar bulan {$bulanIndonesia} {$startDate->format('Y')}",
                     'dibuat_oleh' => $penggunaIds[array_rand($penggunaIds)],
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -165,4 +165,45 @@ class DatabaseSeeder extends Seeder
             }
         }
     }
+
+    private $bulanIndonesia = [
+        'January' => 'Januari',
+        'February' => 'Februari',
+        'March' => 'Maret',
+        'April' => 'April',
+        'May' => 'Mei',
+        'June' => 'Juni',
+        'July' => 'Juli',
+        'August' => 'Agustus',
+        'September' => 'September',
+        'October' => 'Oktober',
+        'November' => 'November',
+        'December' => 'Desember'
+    ];
+
+    private $namaPerusahaan = [
+        'PT. Sentosa Agrindo',
+        'CV. Maju Bersama',
+        'PT. Bumi Pangan Utama',
+        'UD. Hasil Tani',
+        'PT. Sumber Hasil Alam',
+        'CV. Tani Makmur',
+        'PT. Agro Jaya Mandiri',
+        'UD. Tani Sejahtera',
+        'PT. Pangan Nusantara',
+        'CV. Hasil Bumi Indonesia'
+    ];
+
+    private $alamat = [
+        'Jl. Gatot Subroto No. 123, Kuningan, Jakarta Selatan',
+        'Jl. Ahmad Yani No. 45, Bekasi Barat, Bekasi',
+        'Jl. Sudirman Kav. 89, Setiabudi, Jakarta Pusat',
+        'Jl. Raya Bogor Km. 29, Cimanggis, Depok',
+        'Jl. Industri No. 56, Cibitung, Bekasi',
+        'Jl. Raya Serpong No. 78, Tangerang Selatan',
+        'Jl. Veteran No. 234, Bandung',
+        'Jl. Diponegoro No. 167, Surabaya Pusat',
+        'Jl. Gajah Mada No. 90, Semarang',
+        'Jl. Pahlawan No. 45, Medan'
+    ];
 }

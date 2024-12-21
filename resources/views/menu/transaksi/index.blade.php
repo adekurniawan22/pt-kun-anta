@@ -91,12 +91,10 @@
                                                     Dibeli dari:
                                                     <strong>{{ $history->supplier->nama_supplier }}</strong> <br>
                                                 </small>
-                                                <small
-                                                    style="word-wrap: break-word; white-space: normal;"><em>({{ $history->keterangan }})</em></small>
-                                            @endif
-                                            @if (isset($history->keterangan))
-                                                <small
-                                                    style="word-wrap: break-word; white-space: normal;"><em>{{ $history->keterangan }}</em></small>
+                                                @if (isset($history->keterangan))
+                                                    <small
+                                                        style="word-wrap: break-word; white-space: normal;"><em>{{ $history->keterangan }}</em></small>
+                                                @endif
                                             @else
                                                 <small><em>Tidak ada</em></small>
                                             @endif
