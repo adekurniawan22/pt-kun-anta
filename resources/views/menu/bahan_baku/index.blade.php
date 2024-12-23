@@ -33,7 +33,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Bahan Baku</th>
-                                    <th>Stok Minimum</th>
+                                    <th>Standarisasi</th>
                                     <th>Stok Sekarang</th>
                                     <th>Dibuat oleh</th>
                                     <th data-sortable="false">Aksi</th>
