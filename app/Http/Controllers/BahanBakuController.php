@@ -233,14 +233,15 @@ class BahanBakuController extends Controller
             9 => 'September',
             10 => 'Oktober',
             11 => 'November',
-            12 => 'Desembre'
+            12 => 'Desember'
         ];
 
         $bulanRange = collect();
         $bulanTahunIndonesia = [];
 
         for ($i = 0; $i < $range_bulan; $i++) {
-            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i);
+            // $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i + 2);
+            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i + 2);
             $bulanRange->push($bulanSaatIni->format('Y-m'));
             $bulanTahunIndonesia[] = $namaBulan[$bulanSaatIni->month] . ' ' . $bulanSaatIni->year;
         }

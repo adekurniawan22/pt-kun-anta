@@ -49,7 +49,6 @@
                                             style="max-width: 250px; overflow: hidden; white-space: nowrap;">
                                             {{ $supplier->alamat_supplier }}
                                         </td>
-                                        <td>{{ $supplier->pengguna->nama }}</td>
                                         <td>
                                             @if ($supplier->kontak_supplier)
                                                 +{{ $supplier->kontak_supplier }}
@@ -59,6 +58,7 @@
                                                 </button>
                                             @endif
                                         </td>
+                                        <td>{{ $supplier->pengguna->nama }}</td>
                                         <td>
                                             <div class="d-flex align-items-start justify-content-start gap-3 fs-6">
                                                 {{-- Hubungi Supplier --}}
