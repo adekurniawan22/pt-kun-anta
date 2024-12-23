@@ -36,7 +36,7 @@
                                 <i class="bi bi-person-fill"></i>
                             </div>
                             <select class="form-select radius-30 ps-5" id="userSelect" name="email">
-                                <option value="">Pilih user untuk mempermudah hidup</option>
+                                <option value="">Pilih user</option>
                                 <option value="admin@example.com">Admin</option>
                                 <option value="manajer@example.com">Manajer Produksi</option>
                                 <option value="supervisor@example.com">Supervisor</option>
