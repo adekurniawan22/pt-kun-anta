@@ -32,7 +32,7 @@
                         <table id="example" class="table align-middle table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Nama Bahan Baku</th>
+                                    <th>Bahan Baku</th>
                                     <th>Stok Minimum</th>
                                     <th>Stok Sekarang</th>
                                     <th>Dibuat oleh</th>
