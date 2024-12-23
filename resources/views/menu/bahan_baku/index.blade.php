@@ -34,7 +34,7 @@
                                 <tr>
                                     <th>Bahan Baku</th>
                                     <th>Standarisasi</th>
-                                    <th>Stok Sekarang</th>
+                                    <th>Stok Saat Ini</th>
                                     <th>Dibuat oleh</th>
                                     <th data-sortable="false">Aksi</th>
                                 </tr>

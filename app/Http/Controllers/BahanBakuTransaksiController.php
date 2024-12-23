@@ -86,7 +86,7 @@ class BahanBakuTransaksiController extends Controller
         $this->validateStoreOrUpdate($request, $id);
         $historyBahanBaku = BahanBakuTransaksi::findOrFail($id);
         $supplier_id = $request->tipe === "masuk" ? $request->supplier_id : null;
-        $harga_per_satuan = $request->tipe === "keluar" ? $request->harga_per_satuan : null;
+        $harga_per_satuan = $request->tipe === "masuk" ? $request->harga_per_satuan : null;
 
         $historyBahanBaku->update([
             'bahan_baku_id' => $request->bahan_baku_id,

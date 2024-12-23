@@ -31,24 +31,30 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="role">Role</label>
-                            <select id="role" name="role" class="form-select @error('role') is-invalid @enderror">
-                                <option value="">Pilih role</option>
-                                <option value="manajer_produksi"
-                                    {{ old('role', $pengguna->role) == 'manajer_produksi' ? 'selected' : '' }}>
-                                    Manajer Produksi
-                                </option>
-                                <option value="supervisor"
-                                    {{ old('role', $pengguna->role) == 'supervisor' ? 'selected' : '' }}>Supervisor
-                                </option>
-                            </select>
-                            @error('role')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                        @if ($pengguna->role === 'admin')
+                            <input type="hidden" name="role" value="{{ $pengguna->role }}">
+                        @else
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="role">Role</label>
+                                <select id="role" name="role"
+                                    class="form-select @error('role') is-invalid @enderror">
+                                    <option value="">Pilih role</option>
+                                    <option value="manajer_produksi"
+                                        {{ old('role', $pengguna->role) == 'manajer_produksi' ? 'selected' : '' }}>
+                                        Manajer Produksi
+                                    </option>
+                                    <option value="supervisor"
+                                        {{ old('role', $pengguna->role) == 'supervisor' ? 'selected' : '' }}>Supervisor
+                                    </option>
+                                </select>
+                                @error('role')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        @endif
+
 
                         <div class="form-group mb-3">
                             <label class="form-label" for="nama">Nama</label>

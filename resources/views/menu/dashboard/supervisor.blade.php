@@ -18,86 +18,51 @@
         </div>
         <!-- End Breadcrumb -->
 
-        <div class="row">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Pengguna dan Aset</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-3 col-md-6">
-                <div class="card radius-10 bg-purple-gradient">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card radius-10 bg-gradient-cosmic">
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Admin</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-person-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card radius-10 bg-purple-gradient">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Mesin</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-gear-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card radius-10 bg-purple-gradient">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Produk</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-box-seam"></i>
-                            </div>
+                        <div class="text-start">
+                            <h2 class="text-dark">Selamat Datang di Dashboard Supervisor</h2>
+                            <p class="text-dark mb-4">
+                                Anda adalah pemantau utama dari sistem kami. Di sini, Anda dapat mengatur semua transaksi
+                                yang
+                                masuk dan keluar untuk memastikan
+                                kelancaran operasional.
+                            </p>
+                            <a href="{{ route('supervisor.transaksi.index') }}" class="btn btn-success">
+                                <i class="bx bx-package"></i> Kelola Transaksi Bahan Baku
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Pesanan</h5>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-6 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Selesai (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
+                                <p class="mb-0 text-dark">Jumlah Transaksi Masuk Bulan Ini</p>
+                                <h4 class="my-1 text-dark">{{ $jumlahTransaksiMasukBulanIni }}</h4>
                             </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-check-circle"></i>
+                            <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-down-circle"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+            <div class="col-xl-6 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Proses (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
+                                <p class="mb-0 text-dark">Jumlah Transaksi Keluar Bulan Ini</p>
+                                <h4 class="my-1 text-dark">{{ $jumlahTransaksiKeluarBulanIni }}</h4>
                             </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-time-five"></i>
+                            <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-up-circle"></i>
                             </div>
                         </div>
                     </div>

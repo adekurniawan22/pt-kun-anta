@@ -19,49 +19,43 @@
         <!-- End Breadcrumb -->
 
         <div class="row">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Pengguna dan Aset</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Admin</p>
-                                <h4 class="my-1 text-dark">5</h4>
+                                <p class="mb-0 text-dark">Jumlah Supplier</p>
+                                <h4 class="my-1 text-dark">{{ $jumlahSupplier }}</h4>
                             </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-person-fill"></i>
+                            <div class="text-dark ms-auto font-35"><i class="bi bi-basket"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Mesin</p>
-                                <h4 class="my-1 text-dark">5</h4>
+                                <p class="mb-0 text-dark">Jumlah Transaksi Masuk Bulan Ini</p>
+                                <h4 class="my-1 text-dark">{{ $jumlahTransaksiMasukBulanIni }}</h4>
                             </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-gear-fill"></i>
+                            <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-down-circle"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-4 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Produk</p>
-                                <h4 class="my-1 text-dark">5</h4>
+                                <p class="mb-0 text-dark">Jumlah Transaksi Keluar Bulan Ini</p>
+                                <h4 class="my-1 text-dark">{{ $jumlahTransaksiKeluarBulanIni }}</h4>
                             </div>
-                            <div class="text-dark ms-auto font-35"><i class="bi bi-box-seam"></i>
+                            <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-up-circle"></i>
                             </div>
                         </div>
                     </div>
@@ -69,37 +63,84 @@
             </div>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Pesanan</h5>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-6 col-md-12">
                 <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-danger">Stok Bahan Baku Rendah</h5>
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Selesai (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-check-circle"></i>
-                            </div>
-                        </div>
+                        <ul>
+                            @foreach ($stokRendah as $item)
+                                <li>
+                                    <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
+                                        {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
+                                        {{ $item['satuan'] }}</small>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+
+            <div class="col-xl-6 col-md-12">
                 <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-warning">Stok Bahan Baku Kritis</h5>
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Proses (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-time-five"></i>
-                            </div>
-                        </div>
+                        <ul>
+                            @foreach ($stokKritis as $item)
+                                <li>
+                                    <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
+                                        {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
+                                        {{ $item['satuan'] }}</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Top 5 Bahan Baku with the most purchases -->
+            <div class="col-xl-6 col-md-12">
+                <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-info">Top 5 Bahan Baku dengan pembelian terbanyak</h5>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @foreach ($topBahanBaku as $item)
+                                <li class="list-group-item">
+                                    <strong>{{ $item->bahanBaku->nama_bahan_baku }}</strong>
+                                    <br>
+                                    <small><strong>Total:</strong> {{ $item->total_pembelian }} kali pembelian</small>
+                                    <br>
+                                    <small><strong>Supplier:</strong>
+                                        @foreach (explode(',', $item->supplier_ids) as $supplierId)
+                                            {{ \App\Models\Supplier::find($supplierId)->nama_supplier }},
+                                        @endforeach
+                                    </small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 5 Suppliers based on transaction frequency -->
+            <div class="col-xl-6 col-md-12">
+                <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-info">Top 5 Supplier berdasarkan frekuensi transaksi</h5>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @foreach ($topSupplier as $item)
+                                <li class="list-group-item">
+                                    <strong>{{ $item->supplier->nama_supplier }}</strong><br>
+                                    <small><strong>Total:</strong> {{ $item->total_transaksi }} kali Pembelian</small>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>

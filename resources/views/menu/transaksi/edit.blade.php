@@ -269,10 +269,13 @@
                             <div class="col-6">
                                 <div class="form-group mb-3" id="harga_per_satuan_container" style="display: none">
                                     <label class="form-label" for="harga_per_satuan">Harga Per Satuan</label>
-                                    <input type="number" id="harga_per_satuan" name="harga_per_satuan"
-                                        class="form-control @error('harga_per_satuan') is-invalid @enderror"
-                                        value="{{ old('harga_per_satuan', $bahanBakuTransaksi->harga_per_satuan) }}"
-                                        placeholder="Silakan masukkan harga yang valid">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Rp.</span>
+                                        <input type="text" id="harga_per_satuan" name="harga_per_satuan"
+                                            class="form-control harga-input @error('harga_per_satuan') is-invalid @enderror"
+                                            value="{{ old('harga_per_satuan', $bahanBakuTransaksi->harga_per_satuan) }}"
+                                            placeholder="Silakan masukkan harga yang valid">
+                                    </div>
                                     @error('harga_per_satuan')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -376,6 +379,20 @@
                 }
             });
 
+            document.querySelectorAll('.harga-input').forEach(function(input) {
+                if (input.value) {
+                    let rawValue = input.value.replace(/[^0-9]/g, '');
+                    input.value = new Intl.NumberFormat('id-ID').format(rawValue);
+                }
+            });
+
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('harga-input')) {
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    e.target.value = new Intl.NumberFormat('id-ID').format(value);
+                }
+            });
+
             function loadSuppliers(bahanBakuId, supplierSelect) {
                 if (bahanBakuId) {
                     $.ajax({
@@ -419,6 +436,13 @@
 
             $('#tipe').on('change', function() {
                 toggleSupplier();
+            });
+
+            document.querySelector('form').addEventListener('submit', function() {
+                this.querySelectorAll('.harga-input').forEach(function(input) {
+                    let rawValue = input.value.replace(/\./g, '');
+                    input.value = rawValue;
+                });
             });
 
             toggleSupplier();

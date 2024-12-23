@@ -14,7 +14,11 @@ class PenggunaController extends Controller
 
     public function index()
     {
-        $data = Pengguna::all();
+        if (session()->get('role') == 'admin') {
+            $data = Pengguna::all();
+        } else {
+            $data = Pengguna::where('role', '!=', 'admin')->all();
+        }
         return view('menu.pengguna.index', [
             'data' => $data,
             'title' => self::TITLE_INDEX

@@ -35,7 +35,6 @@
                                 <tr>
                                     <th>Nama Supplier</th>
                                     <th>Alamat</th>
-                                    <th>Kontak</th>
                                     <th>Dibuat oleh</th>
                                     <th data-sortable="false">Aksi</th>
                                 </tr>
@@ -49,33 +48,24 @@
                                             style="max-width: 250px; overflow: hidden; white-space: nowrap;">
                                             {{ $supplier->alamat_supplier }}
                                         </td>
-                                        <td>
-                                            @if ($supplier->kontak_supplier)
-                                                +{{ $supplier->kontak_supplier }}
-                                            @else
-                                                <button class="btn btn-secondary btn-sm" style="gap: 5px;" disabled>
-                                                    Tidak Tersedia
-                                                </button>
-                                            @endif
-                                        </td>
                                         <td>{{ $supplier->pengguna->nama }}</td>
                                         <td>
                                             <div class="d-flex align-items-start justify-content-start gap-3 fs-6">
                                                 {{-- Hubungi Supplier --}}
                                                 <a href="https://wa.me/{{ preg_replace('/\D/', '', $supplier->kontak_supplier) }}"
-                                                    target="_blank" class="btn btn-success btn-sm" style="gap: 5px;">
+                                                    target="_blank" class="btn btn-sm btn-success btn-sm" style="gap: 5px;">
                                                     <i class="bi bi-whatsapp"></i> Hubungi
                                                 </a>
 
                                                 <!-- Tombol Edit -->
                                                 <a href="{{ route(session()->get('role') . '.supplier.edit', $supplier->supplier_id) }}"
-                                                    class="btn btn-sm btn-warning text-white d-flex align-items-center">
+                                                    class="btn btn-sm btn-sm btn-warning text-white d-flex align-items-center">
                                                     <i class="bi bi-pencil-fill me-1"></i> Edit
                                                 </a>
 
                                                 <!-- Tombol Hapus -->
                                                 <button type="button"
-                                                    class="btn btn-sm btn-danger d-flex align-items-center"
+                                                    class="btn btn-sm btn-sm btn-danger d-flex align-items-center"
                                                     data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
                                                     data-form-id="delete-form-{{ $supplier->supplier_id }}">
                                                     <i class="bi bi-trash-fill me-1"></i> Hapus

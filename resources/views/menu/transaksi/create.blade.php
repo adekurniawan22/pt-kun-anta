@@ -196,12 +196,12 @@
                       <div class="card h-100 text-dark" style="background-color: rgba(211, 211, 211, 0.2); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                            ${isMultiple ? 
                            `<div class="card-header" 
-                                                                                                                                                        style="background-color: rgba(0, 0, 0, 0.8); color: white; position: relative; padding: 10px;">
-                                                                                                                                                            Transaksi ${transactionCount}
-                                                                                                                                                            <button type="button" class="btn btn-danger py-0 btn-remove-transaksi" data-index="${transactionCount}" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 0.9em !important; ">
-                                                                                                                                                                Hapus
-                                                                                                                                                            </button>
-                                                                                                                                                        </div>` : ''}
+                                                                                                                                                                                        style="background-color: rgba(0, 0, 0, 0.8); color: white; position: relative; padding: 10px;">
+                                                                                                                                                                                            Transaksi ${transactionCount}
+                                                                                                                                                                                            <button type="button" class="btn btn-danger py-0 btn-remove-transaksi" data-index="${transactionCount}" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 0.9em !important; ">
+                                                                                                                                                                                                Hapus
+                                                                                                                                                                                            </button>
+                                                                                                                                                                                        </div>` : ''}
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -253,11 +253,14 @@
                                             <div class="invalid-feedback">Silakan masukkan jumlah yang valid</div>
                                         </div>
                                     </div>
-                                    <div class="col-6" style='display:none;'>
+                                    <div class="col-6" style="display: none;">
                                         <div class="form-group mb-3">
                                             <label class="form-label" for="harga_${index}">Harga per satuan <span class="text-danger">*</span></label>
-                                            <input type="number" id="harga_${index}" name="harga[]" class="form-control" min="1" placeholder="Masukkan harga per satuan">
-                                            <div class="invalid-feedback">Silakan masukkan harga per satuan yang valid</div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">Rp.</span>
+                                                <input type="text" id="harga_${index}" name="harga[]" class="form-control harga-input" placeholder="Masukkan harga per satuan">
+                                                <div class="invalid-feedback">Silakan masukkan harga per satuan yang valid</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -309,6 +312,14 @@
                 updateRemoveButtons();
                 transactionCount++;
             }
+
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('harga-input')) {
+                    console.log("HAHAHA");
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    e.target.value = new Intl.NumberFormat('id-ID').format(value);
+                }
+            });
 
             function updateTransactionHeaders() {
                 const forms = $('.transaksi-form');
@@ -400,6 +411,10 @@
                 });
 
                 if (isValid) {
+                    this.querySelectorAll('.harga-input').forEach(function(input) {
+                        let rawValue = input.value.replace(/\./g, '');
+                        input.value = rawValue;
+                    });
                     this.submit();
                 } else {
                     const firstError = $('.is-invalid').first();
@@ -447,7 +462,7 @@
                 const supplierSelect = $(`#supplier_id_${index}`);
                 const bahanBakuSelect = $(`#bahan_baku_id_${index}`);
                 const jumlahCol = $(`#jumlah_${index}`).parent().parent();
-                const hargaCol = $(`#harga_${index}`).parent().parent();
+                const hargaCol = $(`#harga_${index}`).parent().parent().parent();;
                 const hargaInput = $(`#harga_${index}`);
 
                 if ($(this).val() === 'keluar') {

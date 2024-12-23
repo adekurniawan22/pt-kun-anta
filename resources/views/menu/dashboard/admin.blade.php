@@ -19,11 +19,6 @@
         <!-- End Breadcrumb -->
 
         <div class="row">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Umum</h5>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-xl-3 col-md-6">
                 <div class="card radius-10 bg-purple-gradient">
                     <div class="card-body">
@@ -83,40 +78,87 @@
             </div>
         </div>
 
-        {{-- <div class="row mt-3">
-            <div class="col-12">
-                <h5 class="text-info">Statistik Pesanan</h5>
+        <div class="row">
+            <div class="col-xl-6 col-md-12">
+                <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-danger">Stok Bahan Baku Rendah</h5>
+                    <div class="card-body">
+                        <ul>
+                            @foreach ($stokRendah as $item)
+                                <li>
+                                    <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
+                                        {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
+                                        {{ $item['satuan'] }}</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-md-12">
+                <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-warning">Stok Bahan Baku Kritis</h5>
+                    <div class="card-body">
+                        <ul>
+                            @foreach ($stokKritis as $item)
+                                <li>
+                                    <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
+                                        {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
+                                        {{ $item['satuan'] }}</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <!-- Top 5 Bahan Baku with the most purchases -->
+            <div class="col-xl-6 col-md-12">
                 <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-info">Top 5 Bahan Baku dengan pembelian terbanyak</h5>
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Selesai (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-check-circle"></i>
-                            </div>
-                        </div>
+                        <ul class="list-group">
+                            @foreach ($topBahanBaku as $item)
+                                <li class="list-group-item">
+                                    <strong>{{ $item->bahanBaku->nama_bahan_baku }}</strong>
+                                    <br>
+                                    <small><strong>Total:</strong> {{ $item->total_pembelian }} kali pembelian</small>
+                                    <br>
+                                    <small><strong>Supplier:</strong>
+                                        @foreach (explode(',', $item->supplier_ids) as $supplierId)
+                                            {{ \App\Models\Supplier::find($supplierId)->nama_supplier }},
+                                        @endforeach
+                                    </small>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+
+            <!-- Top 5 Suppliers based on transaction frequency -->
+            <div class="col-xl-6 col-md-12">
                 <div class="card radius-10 bg-purple-gradient">
+                    <h5 class="card-header text-white bg-info">Top 5 Supplier berdasarkan frekuensi transaksi</h5>
                     <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <p class="mb-0 text-dark">Jumlah Pesanan Proses (Desember)</p>
-                                <h4 class="my-1 text-dark">5</h4>
-                            </div>
-                            <div class="text-dark ms-auto font-35"><i class="bx bx-time-five"></i>
-                            </div>
-                        </div>
+                        <ul class="list-group">
+                            @foreach ($topSupplier as $item)
+                                <li class="list-group-item">
+                                    <strong>{{ $item->supplier->nama_supplier }}</strong><br>
+                                    <small><strong>Total:</strong> {{ $item->total_transaksi }} kali Pembelian</small>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
     </main>
 @endsection

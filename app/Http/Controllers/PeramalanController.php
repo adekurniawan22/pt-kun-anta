@@ -43,10 +43,10 @@ class PeramalanController extends Controller
 
         $pdf = PDF::loadView('menu.peramalan.pdf', [
             'bahan_baku' => $bahanBakuFiltered,
-            'title' => 'Laporan Peramalan Bahan Baku',
+            'title' => 'Peramalan Bahan Baku',
             'bulan_prediksi' => $date_prediksi->locale('id')->monthName . ' ' . $date_prediksi->year
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->stream('laporan_peramalan_' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->stream('peramalan_' . now()->format('Y-m-d') . '.pdf');
     }
 }

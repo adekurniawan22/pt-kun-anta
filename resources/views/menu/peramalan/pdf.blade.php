@@ -35,7 +35,6 @@
 
         .fw-bold {
             font-weight: bold;
-            font-style: italic;
         }
 
         .text-muted {
@@ -73,18 +72,19 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th style="text-align: center">No.</th>
                     <th>Bahan Baku</th>
-                    <th>Stok Minimum</th>
-                    <th>Stok Sekarang</th>
+                    <th>Standarisasi</th>
+                    <th>Stok Saat Ini</th>
                     <th>Prediksi Pembelian</th>
-                    <th>Harga Satuan Terakhir</th>
-                    <th>Total Biaya Prediksi</th>
-                    <th>Supplier Terakhir</th>
+                    <th>Informasi Pembelian Terakhir</th>
+                    <th>Total Prediksi</th>
                 </tr>
             </thead>
             <tbody>
                 @php
                     $total_biaya = 0;
+                    $no = 1;
                 @endphp
                 @foreach ($bahan_baku as $data)
                     @php
@@ -98,6 +98,7 @@
                         $total_biaya += $biaya;
                     @endphp
                     <tr>
+                        <td style="text-align: center">{{ $no++ }}.</td>
                         <td>
                             <span>{{ $data['nama_bahan_baku'] ?? 'Tidak ada nama' }}</span>
                             <br>
@@ -128,10 +129,13 @@
                             @endif
                         </td>
                         <td>
-                            @if (isset($data['supplier_terakhir']['harga_per_satuan']) && is_numeric($data['supplier_terakhir']['harga_per_satuan']))
-                                Rp {{ number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') }}
+                            @if (isset($data['supplier_terakhir']['harga_per_satuan']) && isset($data['supplier_terakhir']['nama_supplier']))
+                                Harga per satuan : <strong>Rp
+                                    {{ number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') }}</strong>
+                                <br>
+                                Supplier : <strong>{{ $data['supplier_terakhir']['nama_supplier'] }}</strong>
                             @else
-                                <span class="text-muted">Belum ada harga</span>
+                                <span class="text-muted">Belum ada info tersedia</span>
                             @endif
                         </td>
                         <td>
@@ -141,20 +145,13 @@
                                 <span class="text-muted">Harga belum tersedia</span>
                             @endif
                         </td>
-                        <td>
-                            @if (isset($data['supplier_terakhir']['nama_supplier']))
-                                {{ $data['supplier_terakhir']['nama_supplier'] }}
-                            @else
-                                <span class="text-muted">Belum ada supplier</span>
-                            @endif
-                        </td>
                     </tr>
                 @endforeach
-                <tr style="background-color: rgb(182, 208, 242)">
-                    <td colspan="5" class="fw-bold">
+                <tr style="background-color:#f2f2f2">
+                    <td colspan="6" class="fw-bold" style="text-align: right">
                         Total Biaya:
                     </td>
-                    <td colspan="2" class="fw-bold">Rp {{ number_format($total_biaya, 0, ',', '.') }}</td>
+                    <td class="fw-bold">Rp {{ number_format($total_biaya, 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>

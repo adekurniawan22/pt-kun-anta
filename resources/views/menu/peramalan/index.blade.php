@@ -66,8 +66,8 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Bahan Baku</th>
-                                    <th>Stok Minimum</th>
-                                    <th>Stok Sekarang</th>
+                                    <th>Standarisasi</th>
+                                    <th>Stok Saat Ini</th>
                                     <th>Histori 3 Periode</th>
                                     <th>Prediksi</th>
                                 </tr>

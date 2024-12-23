@@ -77,11 +77,11 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="form-label" for="stok_minimal">Stok Minimum</label>
+                            <label class="form-label" for="stok_minimal">Standarisasi</label>
                             <input type="number" min="1" id="stok_minimal" name="stok_minimal"
                                 class="form-control @error('stok_minimal') is-invalid @enderror"
                                 value="{{ old('stok_minimal', $bahanBaku->stok_minimal) }}"
-                                placeholder="Masukkan jumlah stok minimum">
+                                placeholder="Masukkan jumlah standarisasi">
                             @error('stok_minimal')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

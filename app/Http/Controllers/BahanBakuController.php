@@ -215,7 +215,7 @@ class BahanBakuController extends Controller
             'kode_bahan_baku' => 'Kode Bahan Baku',
             'nama_bahan_baku' => 'Nama Bahan Baku',
             'satuan' => 'Satuan',
-            'stok_minimal' => 'Stok Minimum',
+            'stok_minimal' => 'Standarisasi',
         ];
 
         return $request->validate($rules, [], $customAttributes);
