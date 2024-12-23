@@ -39,34 +39,34 @@ class BahanBakuTransaksiController extends Controller
         ]);
     }
 
-        public function store(Request $request)
-        {
-            foreach ($request->bahan_baku_id as $index => $bahanBakuId) {
-                $supplier_id = $request->supplier_id[$index] != null ? $request->supplier_id[$index] : null;
+    public function store(Request $request)
+    {
+        foreach ($request->bahan_baku_id as $index => $bahanBakuId) {
+            $supplier_id = $request->supplier_id[$index] != null ? $request->supplier_id[$index] : null;
 
-                if ($request->tipe[$index] === "keluar") {
-                    $harga_per_satuan = null;
-                } else {
-                    $harga_per_satuan = $request->harga[$index];
-                }
-
-                $data = [
-                    'bahan_baku_id' => $bahanBakuId,
-                    'tipe' => $request->tipe[$index],
-                    'supplier_id' => $supplier_id,
-                    'tanggal_transaksi' => $request->tanggal_transaksi[$index],
-                    'jumlah' => $request->jumlah[$index],
-                    'harga_per_satuan' => $harga_per_satuan,
-                    'keterangan' => $request->keterangan[$index],
-                    'dibuat_oleh' => session()->get('pengguna_id'),
-                ];
-
-                BahanBakuTransaksi::create($data);
+            if ($request->tipe[$index] === "keluar") {
+                $harga_per_satuan = null;
+            } else {
+                $harga_per_satuan = $request->harga[$index];
             }
 
-            return redirect()->route(session()->get('role') . '.transaksi.index')
-                ->with('success', 'Transaksi Bahan Baku berhasil ditambahkan.');
+            $data = [
+                'bahan_baku_id' => $bahanBakuId,
+                'tipe' => $request->tipe[$index],
+                'supplier_id' => $supplier_id,
+                'tanggal_transaksi' => $request->tanggal_transaksi[$index],
+                'jumlah' => $request->jumlah[$index],
+                'harga_per_satuan' => $harga_per_satuan,
+                'keterangan' => $request->keterangan[$index],
+                'dibuat_oleh' => session()->get('pengguna_id'),
+            ];
+
+            BahanBakuTransaksi::create($data);
         }
+
+        return redirect()->route(session()->get('role') . '.transaksi.index')
+            ->with('success', 'Transaksi Bahan Baku berhasil ditambahkan.');
+    }
 
     public function edit($id)
     {
@@ -112,15 +112,17 @@ class BahanBakuTransaksiController extends Controller
 
     private function validateStoreOrUpdate(Request $request, $id = null)
     {
+        // FARHAN
         $rules = [
             'bahan_baku_id' => 'required|exists:bahan_baku,bahan_baku_id',
             'tipe' => 'required|in:masuk,keluar',
             'supplier_id' => 'required_if:tipe,masuk',
             'tanggal_transaksi' => 'required|date',
             'jumlah' => 'required|integer|min:1',
-            'harga_per_satuan' => 'required_if:tipe,masuk|integer|min:1',
+            'harga_per_satuan' => 'required_if:tipe,masuk|nullable|integer|min:1',
             'keterangan' => 'nullable|string|max:255',
         ];
+
 
         $customAttributes = [
             'bahan_baku_id' => 'Bahan Baku',

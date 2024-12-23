@@ -17,6 +17,7 @@ class PeramalanController extends Controller
         $date_prediksi = $date_prediksi ? Carbon::createFromFormat('d/m/Y', $date_prediksi) : Carbon::now();
 
         $bahan_baku = BahanBaku::getAllDetailedStock(3, $date_prediksi);
+        // dd($bahan_baku);
 
         $bahanBakuFiltered = $bahan_baku->filter(function ($item) {
             return $item['stok_minimal'] >= $item['stok_saat_ini'];
