@@ -61,12 +61,11 @@
                             <label for="satuan" class="form-label">Satuan</label>
                             <select name="satuan" id="satuan" class="form-select @error('satuan') is-invalid @enderror">
                                 <option value="">Pilih satuan</option>
-                                <option value="Liter" {{ old('satuan', $bahanBaku->satuan) == 'Liter' ? 'selected' : '' }}>
-                                    Liter
+                                <option value="Gram" {{ old('satuan', $bahanBaku->satuan) == 'Gram' ? 'selected' : '' }}>
+                                    Gram
                                 </option>
-                                <option value="Kilogram"
-                                    {{ old('satuan', $bahanBaku->satuan) == 'Kilogram' ? 'selected' : '' }}>
-                                    Kilogram
+                                <option value="Ml" {{ old('satuan', $bahanBaku->satuan) == 'Ml' ? 'selected' : '' }}>
+                                    Ml
                                 </option>
                             </select>
                             @error('satuan')
