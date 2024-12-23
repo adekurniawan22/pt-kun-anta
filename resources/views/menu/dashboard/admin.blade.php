@@ -84,15 +84,15 @@
                     <h5 class="card-header text-white bg-danger">Stok Bahan Baku Rendah</h5>
                     <div class="card-body">
                         <ul>
-                            @foreach ($stokRendah as $item)
+                            @forelse ($stokRendah as $item)
                                 <li>
                                     <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
-                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
-                                        {{ $item['satuan'] }}</small><br>
-                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
-                                        {{ $item['satuan'] }}</small>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }} {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }} {{ $item['satuan'] }}</small>
                                 </li>
-                            @endforeach
+                            @empty
+                                <li><strong>Tidak ada stok bahan baku rendah saat ini.</strong></li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
@@ -103,15 +103,15 @@
                     <h5 class="card-header text-white bg-warning">Stok Bahan Baku Kritis</h5>
                     <div class="card-body">
                         <ul>
-                            @foreach ($stokKritis as $item)
+                            @forelse ($stokKritis as $item)
                                 <li>
                                     <strong>{{ $item['nama_bahan_baku'] }}</strong><br>
-                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }}
-                                        {{ $item['satuan'] }}</small><br>
-                                    <small>Standarisasi: {{ $item['stok_minimal'] }}
-                                        {{ $item['satuan'] }}</small>
+                                    <small>Stok Saat Ini: {{ $item['stok_saat_ini'] }} {{ $item['satuan'] }}</small><br>
+                                    <small>Standarisasi: {{ $item['stok_minimal'] }} {{ $item['satuan'] }}</small>
                                 </li>
-                            @endforeach
+                            @empty
+                                <li><strong>Tidak ada stok bahan baku kritis saat ini.</strong></li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                     <h5 class="card-header text-white bg-info">Top 5 Bahan Baku dengan pembelian terbanyak</h5>
                     <div class="card-body">
                         <ul class="list-group">
-                            @foreach ($topBahanBaku as $item)
+                            @forelse ($topBahanBaku as $item)
                                 <li class="list-group-item">
                                     <strong>{{ $item->bahanBaku->nama_bahan_baku }}</strong>
                                     <br>
@@ -137,7 +137,10 @@
                                         @endforeach
                                     </small>
                                 </li>
-                            @endforeach
+                            @empty
+                                <li class="list-group-item"><strong>Tidak ada data bahan baku dengan pembelian
+                                        terbanyak.</strong></li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
@@ -149,16 +152,20 @@
                     <h5 class="card-header text-white bg-info">Top 5 Supplier berdasarkan frekuensi transaksi</h5>
                     <div class="card-body">
                         <ul class="list-group">
-                            @foreach ($topSupplier as $item)
+                            @forelse ($topSupplier as $item)
                                 <li class="list-group-item">
                                     <strong>{{ $item->supplier->nama_supplier }}</strong><br>
                                     <small><strong>Total:</strong> {{ $item->total_transaksi }} kali Pembelian</small>
                                 </li>
-                            @endforeach
+                            @empty
+                                <li class="list-group-item"><strong>Tidak ada data supplier berdasarkan frekuensi
+                                        transaksi.</strong></li>
+                            @endforelse
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 @endsection
