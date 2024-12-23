@@ -7,16 +7,13 @@ use Illuminate\Http\Request;
 
 class BahanBakuTransaksiController extends Controller
 {
-    // Constants for view titles
     private const TITLE_INDEX = 'Daftar Transaksi Bahan Baku';
     private const TITLE_CREATE = 'Tambah Transaksi Bahan Baku';
     private const TITLE_EDIT = 'Edit Transaksi Bahan Baku';
 
-    // Index method (show all history transactions)
     public function index()
     {
         $data = BahanBakuTransaksi::with('bahanBaku', 'supplier', 'pengguna')->get();
-        // dd(BahanBakuTransaksi::with('bahanBaku', 'supplier')->toSql());
 
         return view('menu.transaksi.index', [
             'data' => $data,
@@ -24,7 +21,6 @@ class BahanBakuTransaksiController extends Controller
         ]);
     }
 
-    // Create method (show form for creating new history transaction)
     public function create()
     {
         $bahanBaku = BahanBaku::all();
@@ -43,45 +39,34 @@ class BahanBakuTransaksiController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        // dd($request->all());
-        foreach ($request->bahan_baku_id as $index => $bahanBakuId) {
-            $supplier_id = $request->supplier_id[$index] != null ? $request->supplier_id[$index] : null;
+        public function store(Request $request)
+        {
+            foreach ($request->bahan_baku_id as $index => $bahanBakuId) {
+                $supplier_id = $request->supplier_id[$index] != null ? $request->supplier_id[$index] : null;
 
-            if ($request->tipe[$index] === "keluar") {
-                $total = null;
-            } else {
-                $total = $request->total[$index];
-            }
+                if ($request->tipe[$index] === "keluar") {
+                    $harga_per_satuan = null;
+                } else {
+                    $harga_per_satuan = $request->harga[$index];
+                }
 
-            $data = [
-                'bahan_baku_id' => $bahanBakuId,
-                'tipe' => $request->tipe[$index],
-                'supplier_id' => $supplier_id,
-                'tanggal_transaksi' => $request->tanggal_transaksi[$index],
-                'jumlah' => $request->jumlah[$index],
-                'total' => $total,
-                'keterangan' => $request->keterangan[$index],
-                'dibuat_oleh' => session()->get('pengguna_id'),
-            ];
-
-            if ($request->tipe[$index] === "masuk") {
-                $bahan_baku = BahanBaku::findOrFail($bahanBakuId);
-                // Hitung harga per satuan
-                $hargaPerSatuan = round($request->total[$index] / $request->jumlah[$index], 0);
-
-                // Perbarui harga per satuan di tabel bahan_baku
-                $bahan_baku->harga_per_satuan = $hargaPerSatuan;
-                $bahan_baku->save();
-            } else
+                $data = [
+                    'bahan_baku_id' => $bahanBakuId,
+                    'tipe' => $request->tipe[$index],
+                    'supplier_id' => $supplier_id,
+                    'tanggal_transaksi' => $request->tanggal_transaksi[$index],
+                    'jumlah' => $request->jumlah[$index],
+                    'harga_per_satuan' => $harga_per_satuan,
+                    'keterangan' => $request->keterangan[$index],
+                    'dibuat_oleh' => session()->get('pengguna_id'),
+                ];
 
                 BahanBakuTransaksi::create($data);
-        }
+            }
 
-        return redirect()->route(session()->get('role') . '.transaksi.index')
-            ->with('success', 'Transaksi Bahan Baku berhasil ditambahkan.');
-    }
+            return redirect()->route(session()->get('role') . '.transaksi.index')
+                ->with('success', 'Transaksi Bahan Baku berhasil ditambahkan.');
+        }
 
     public function edit($id)
     {
@@ -96,18 +81,20 @@ class BahanBakuTransaksiController extends Controller
         ]);
     }
 
-    // Update method (update history transaction data in the database)
     public function update(Request $request, $id)
     {
         $this->validateStoreOrUpdate($request, $id);
         $historyBahanBaku = BahanBakuTransaksi::findOrFail($id);
         $supplier_id = $request->tipe === "masuk" ? $request->supplier_id : null;
+        $harga_per_satuan = $request->tipe === "keluar" ? $request->harga_per_satuan : null;
+
         $historyBahanBaku->update([
             'bahan_baku_id' => $request->bahan_baku_id,
             'tipe' => $request->tipe,
             'supplier_id' => $supplier_id,
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'jumlah' => $request->jumlah,
+            'harga_per_satuan' => $harga_per_satuan,
             'keterangan' => $request->keterangan,
         ]);
 
@@ -115,16 +102,14 @@ class BahanBakuTransaksiController extends Controller
             ->with('success', 'Transaksi Bahan Baku berhasil diedit.');
     }
 
-    // Destroy method (delete history transaction)
     public function destroy($id)
     {
-        $historyBahanBaku = BahanBakuTransaksi::findOrFail($id); // Ambil transaksi history berdasarkan ID
-        $historyBahanBaku->delete(); // Hapus transaksi history
+        $historyBahanBaku = BahanBakuTransaksi::findOrFail($id);
+        $historyBahanBaku->delete();
         return redirect()->route(session()->get('role') . '.transaksi.index')
             ->with('success', 'Transaksi Bahan Baku berhasil dihapus.');
     }
 
-    // Private method for validation (to avoid duplication of logic)
     private function validateStoreOrUpdate(Request $request, $id = null)
     {
         $rules = [
@@ -133,6 +118,7 @@ class BahanBakuTransaksiController extends Controller
             'supplier_id' => 'required_if:tipe,masuk',
             'tanggal_transaksi' => 'required|date',
             'jumlah' => 'required|integer|min:1',
+            'harga_per_satuan' => 'required_if:tipe,masuk|integer|min:1',
             'keterangan' => 'nullable|string|max:255',
         ];
 
@@ -142,6 +128,7 @@ class BahanBakuTransaksiController extends Controller
             'supplier_id' => 'Supplier',
             'tanggal_transaksi' => 'Tanggal Transaksi',
             'jumlah' => 'Jumlah Bahan Baku',
+            'harga_per_satuan' => 'Harga per satuan bahan baku',
             'keterangan' => 'Keterangan',
         ];
 

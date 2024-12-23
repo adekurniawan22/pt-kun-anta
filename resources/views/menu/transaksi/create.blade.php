@@ -196,12 +196,12 @@
                       <div class="card h-100 text-dark" style="background-color: rgba(211, 211, 211, 0.2); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                            ${isMultiple ? 
                            `<div class="card-header" 
-                                                                                                                                            style="background-color: rgba(0, 0, 0, 0.8); color: white; position: relative; padding: 10px;">
-                                                                                                                                                Transaksi ${transactionCount}
-                                                                                                                                                <button type="button" class="btn btn-danger py-0 btn-remove-transaksi" data-index="${transactionCount}" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 0.9em !important; ">
-                                                                                                                                                    Hapus
-                                                                                                                                                </button>
-                                                                                                                                            </div>` : ''}
+                                                                                                                                                        style="background-color: rgba(0, 0, 0, 0.8); color: white; position: relative; padding: 10px;">
+                                                                                                                                                            Transaksi ${transactionCount}
+                                                                                                                                                            <button type="button" class="btn btn-danger py-0 btn-remove-transaksi" data-index="${transactionCount}" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 0.9em !important; ">
+                                                                                                                                                                Hapus
+                                                                                                                                                            </button>
+                                                                                                                                                        </div>` : ''}
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -255,9 +255,9 @@
                                     </div>
                                     <div class="col-6" style='display:none;'>
                                         <div class="form-group mb-3">
-                                            <label class="form-label" for="total_${index}">Total <span class="text-danger">*</span></label>
-                                            <input type="number" id="total_${index}" name="total[]" class="form-control" min="1" placeholder="Masukkan total harga">
-                                            <div class="invalid-feedback">Silakan masukkan total yang valid</div>
+                                            <label class="form-label" for="harga_${index}">Harga per satuan <span class="text-danger">*</span></label>
+                                            <input type="number" id="harga_${index}" name="harga[]" class="form-control" min="1" placeholder="Masukkan harga per satuan">
+                                            <div class="invalid-feedback">Silakan masukkan harga per satuan yang valid</div>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -347,15 +347,6 @@
                 }
             }
 
-            function updateRemoveButtons() {
-                const forms = $('.transaksi-form').length;
-                if (forms > 1) {
-                    $('.btn-remove-transaksi').show();
-                } else {
-                    $('.btn-remove-transaksi').hide();
-                }
-            }
-
             $('#btn-add-transaksi').click(function() {
                 addTransactionForm();
             });
@@ -401,9 +392,9 @@
                         isValid = false;
                     }
 
-                    const total = form.find('input[name="total[]"].required');
-                    if (total.val() <= 0) {
-                        total.addClass('is-invalid');
+                    const harga = form.find('input[name="harga[]"].required');
+                    if (harga.val() <= 0) {
+                        harga.addClass('is-invalid');
                         isValid = false;
                     }
                 });
@@ -455,25 +446,20 @@
                 const supplierContainer = $(`.supplier-container_${index}`);
                 const supplierSelect = $(`#supplier_id_${index}`);
                 const bahanBakuSelect = $(`#bahan_baku_id_${index}`);
-                // Mengubah selector untuk mengambil parent div dengan class col-6
                 const jumlahCol = $(`#jumlah_${index}`).parent().parent();
-                const totalCol = $(`#total_${index}`).parent().parent();
-                const totalInput = $(`#total_${index}`); // Selector untuk input total
+                const hargaCol = $(`#harga_${index}`).parent().parent();
+                const hargaInput = $(`#harga_${index}`);
 
-                // Pengecekan tipe transaksi untuk pengaturan kolom
                 if ($(this).val() === 'keluar') {
-                    // Jika tipe keluar
                     jumlahCol.removeClass('col-6').addClass('col-12');
-                    totalCol.hide(); // Sembunyikan kolom total
-                    totalInput.removeClass('required'); // Hapus class required dari input total
+                    hargaCol.hide();
+                    hargaInput.removeClass('required');
                 } else if ($(this).val() === 'masuk') {
-                    // Jika tipe masuk
                     jumlahCol.removeClass('col-12').addClass('col-6');
-                    totalCol.show(); // Tampilkan kembali kolom total
-                    totalInput.addClass('required'); // Tambah class required ke input total
+                    hargaCol.show();
+                    hargaInput.addClass('required');
                 }
 
-                // Pengecekan untuk supplier
                 if ($(this).val() === 'masuk') {
                     supplierContainer.slideDown();
                     supplierSelect.addClass('required');

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('tipe', ['masuk', 'keluar']);
             $table->date('tanggal_transaksi');
             $table->integer('jumlah');
-            $table->integer('total')->nullable();
+            $table->integer('harga_per_satuan')->nullable();
             $table->string('keterangan', 255)->nullable();
             $table->foreignId('supplier_id')
                 ->nullable()

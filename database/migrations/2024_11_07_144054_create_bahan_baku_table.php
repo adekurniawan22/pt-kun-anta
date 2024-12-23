@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('nama_bahan_baku', 100);
             $table->string('satuan', 100);
             $table->integer('stok_minimal');
-            $table->integer('harga_per_satuan')->nullable();
             $table->unsignedBigInteger('dibuat_oleh')->nullable();
             $table->foreign('dibuat_oleh')
                 ->references('pengguna_id')

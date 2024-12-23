@@ -18,7 +18,7 @@ class BahanBakuTransaksi extends Model
         'tipe',
         'tanggal_transaksi',
         'jumlah',
-        'total',
+        'harga_per_satuan',
         'keterangan',
         'supplier_id',
         'dibuat_oleh'

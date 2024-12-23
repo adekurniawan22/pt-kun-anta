@@ -14,8 +14,6 @@ class BahanBakuController extends Controller
     private const TITLE_CREATE = 'Tambah Bahan Baku';
     private const TITLE_EDIT = 'Edit Bahan Baku';
 
-
-
     public function index()
     {
         $bahan_baku = BahanBaku::withSum(['transaksi as total_masuk' => function ($query) {
@@ -25,7 +23,6 @@ class BahanBakuController extends Controller
         }], 'jumlah')
             ->get()
             ->map(function ($item) {
-                // Hitung stok
                 $item->stok = ($item->total_masuk ?? 0) - ($item->total_keluar ?? 0);
                 return $item;
             });
@@ -35,119 +32,6 @@ class BahanBakuController extends Controller
             'title' => self::TITLE_INDEX
         ]);
     }
-
-    // Contoh penggunaan untuk fitur PDF
-    public function generatePDF()
-    {
-        // Ambil data bahan baku
-        $data = $this->getBahanBakuData();
-
-        // Generate PDF dengan orientasi landscape
-        $pdf = PDF::loadView('menu.bahan_baku.pdf', [
-            'data' => $data,
-            'title' => 'Laporan Bahan Baku'
-        ])->setPaper('a4', 'landscape'); // Set orientasi landscape
-
-        // Download PDF
-        return $pdf->stream('laporan_bahan_baku_' . now()->format('Y-m-d') . '.pdf');
-    }
-
-    private function getDataCalculateSMA($range_bulan = 3)
-    {
-        $bulanTerakhir = Carbon::now()->subMonths($range_bulan)->startOfMonth();
-
-        $namaBulan = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember'
-        ];
-
-        $bulanRange = collect();
-        $bulanTahunIndonesia = [];
-
-        for ($i = 0; $i < $range_bulan; $i++) {
-            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i);
-            $bulanRange->push($bulanSaatIni->format('Y-m'));
-            $bulanTahunIndonesia[] = $namaBulan[$bulanSaatIni->month] . ' ' . $bulanSaatIni->year;
-        }
-
-        $data = BahanBaku::withSum(['transaksi as total_masuk' => function ($query) {
-            $query->where('tipe', 'masuk');
-        }], 'jumlah')
-            ->withSum(['transaksi as total_keluar' => function ($query) {
-                $query->where('tipe', 'keluar');
-            }], 'jumlah')
-            ->get()
-            ->map(function ($item) use ($bulanRange, $bulanTahunIndonesia, $bulanTerakhir) {
-                // Hitung stok
-                $item->stok = ($item->total_masuk ?? 0) - ($item->total_keluar ?? 0);
-
-                // Ambil data keluar per bulan untuk setiap bahan baku
-                $dataKeluar = BahanBakuTransaksi::select(
-                    DB::raw('MONTH(tanggal_transaksi) as bulan'),
-                    DB::raw('YEAR(tanggal_transaksi) as tahun'),
-                    DB::raw('SUM(jumlah) as total_keluar')
-                )
-                    ->where('tipe', 'keluar')
-                    ->where('tanggal_transaksi', '>=', $bulanTerakhir)
-                    ->where('bahan_baku_id', $item->bahan_baku_id)
-                    ->groupBy(DB::raw('MONTH(tanggal_transaksi)'), DB::raw('YEAR(tanggal_transaksi)'))
-                    ->orderBy(DB::raw('YEAR(tanggal_transaksi)'), 'desc')
-                    ->orderBy(DB::raw('MONTH(tanggal_transaksi)'), 'desc')
-                    ->get();
-
-                // Inisialisasi data keluar dengan nol
-                $bulanDataKeluar = array_fill(0, count($bulanRange), 0);
-
-                // Update data keluar jika ada transaksi
-                if ($dataKeluar->count() > 0) {
-                    foreach ($bulanRange as $index => $bulan) {
-                        $bulanTahun = Carbon::parse($bulan);
-                        $bulanTransaksiKeluar = $dataKeluar->firstWhere(function ($data) use ($bulanTahun) {
-                            return $data->bulan == $bulanTahun->month && $data->tahun == $bulanTahun->year;
-                        });
-
-                        $bulanDataKeluar[$index] = $bulanTransaksiKeluar ? $bulanTransaksiKeluar->total_keluar : 0;
-                    }
-                }
-
-                // Hitung rata-rata
-                $item->rata_rata = count($bulanDataKeluar) > 0
-                    ? round(array_sum($bulanDataKeluar) / count($bulanDataKeluar), 0)
-                    : 0;
-
-                // Ambil transaksi masuk terakhir
-                $transaksiMasukTerakhir = BahanBakuTransaksi::where('bahan_baku_id', $item->bahan_baku_id)
-                    ->where('tipe', 'masuk')
-                    ->orderBy('bahan_baku_transaksi_id', 'desc')
-                    ->first();
-
-                // Cari nama supplier
-                if ($transaksiMasukTerakhir && $transaksiMasukTerakhir->supplier_id) {
-                    $supplier = Supplier::find($transaksiMasukTerakhir->supplier_id);
-                    $item->supplier_terakhir = $supplier ? $supplier->nama_supplier : 'Tidak diketahui';
-                } else {
-                    $item->supplier_terakhir = 'Tidak diketahui';
-                }
-
-                $item->data_keluar_bulanan = $bulanDataKeluar;
-                $item->nama_bulan = $bulanTahunIndonesia;
-
-                return $item;
-            });
-
-        return $data;
-    }
-
 
     public function create()
     {
@@ -241,7 +125,7 @@ class BahanBakuController extends Controller
 
         for ($i = 0; $i < $range_bulan; $i++) {
             // $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i + 2);
-            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i + 2);
+            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i);
             $bulanRange->push($bulanSaatIni->format('Y-m'));
             $bulanTahunIndonesia[] = $namaBulan[$bulanSaatIni->month] . ' ' . $bulanSaatIni->year;
         }
@@ -318,7 +202,6 @@ class BahanBakuController extends Controller
         return response()->json($finalData);
     }
 
-    // Private method for validation (to avoid duplication of logic)
     private function validateStoreOrUpdate(Request $request, $id = null)
     {
         $rules = [
@@ -335,7 +218,105 @@ class BahanBakuController extends Controller
             'stok_minimal' => 'Stok Minimum',
         ];
 
-        // Validasi input dengan atribut kustom
         return $request->validate($rules, [], $customAttributes);
+    }
+
+    public function generatePDF()
+    {
+        $data = $this->getBahanBakuData();
+        $pdf = PDF::loadView('menu.bahan_baku.pdf', [
+            'data' => $data,
+            'title' => 'Laporan Bahan Baku'
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('laporan_bahan_baku_' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    private function getDataCalculateSMA($range_bulan = 3)
+    {
+        $bulanTerakhir = Carbon::now()->subMonths($range_bulan)->startOfMonth();
+
+        $namaBulan = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+        ];
+
+        $bulanRange = collect();
+        $bulanTahunIndonesia = [];
+
+        for ($i = 0; $i < $range_bulan; $i++) {
+            $bulanSaatIni = Carbon::now()->subMonths($range_bulan - $i);
+            $bulanRange->push($bulanSaatIni->format('Y-m'));
+            $bulanTahunIndonesia[] = $namaBulan[$bulanSaatIni->month] . ' ' . $bulanSaatIni->year;
+        }
+
+        $data = BahanBaku::withSum(['transaksi as total_masuk' => function ($query) {
+            $query->where('tipe', 'masuk');
+        }], 'jumlah')
+            ->withSum(['transaksi as total_keluar' => function ($query) {
+                $query->where('tipe', 'keluar');
+            }], 'jumlah')
+            ->get()
+            ->map(function ($item) use ($bulanRange, $bulanTahunIndonesia, $bulanTerakhir) {
+                $item->stok = ($item->total_masuk ?? 0) - ($item->total_keluar ?? 0);
+                $dataKeluar = BahanBakuTransaksi::select(
+                    DB::raw('MONTH(tanggal_transaksi) as bulan'),
+                    DB::raw('YEAR(tanggal_transaksi) as tahun'),
+                    DB::raw('SUM(jumlah) as total_keluar')
+                )
+                    ->where('tipe', 'keluar')
+                    ->where('tanggal_transaksi', '>=', $bulanTerakhir)
+                    ->where('bahan_baku_id', $item->bahan_baku_id)
+                    ->groupBy(DB::raw('MONTH(tanggal_transaksi)'), DB::raw('YEAR(tanggal_transaksi)'))
+                    ->orderBy(DB::raw('YEAR(tanggal_transaksi)'), 'desc')
+                    ->orderBy(DB::raw('MONTH(tanggal_transaksi)'), 'desc')
+                    ->get();
+
+                $bulanDataKeluar = array_fill(0, count($bulanRange), 0);
+
+                if ($dataKeluar->count() > 0) {
+                    foreach ($bulanRange as $index => $bulan) {
+                        $bulanTahun = Carbon::parse($bulan);
+                        $bulanTransaksiKeluar = $dataKeluar->firstWhere(function ($data) use ($bulanTahun) {
+                            return $data->bulan == $bulanTahun->month && $data->tahun == $bulanTahun->year;
+                        });
+
+                        $bulanDataKeluar[$index] = $bulanTransaksiKeluar ? $bulanTransaksiKeluar->total_keluar : 0;
+                    }
+                }
+
+                $item->rata_rata = count($bulanDataKeluar) > 0
+                    ? round(array_sum($bulanDataKeluar) / count($bulanDataKeluar), 0)
+                    : 0;
+
+                $transaksiMasukTerakhir = BahanBakuTransaksi::where('bahan_baku_id', $item->bahan_baku_id)
+                    ->where('tipe', 'masuk')
+                    ->orderBy('bahan_baku_transaksi_id', 'desc')
+                    ->first();
+
+                if ($transaksiMasukTerakhir && $transaksiMasukTerakhir->supplier_id) {
+                    $supplier = Supplier::find($transaksiMasukTerakhir->supplier_id);
+                    $item->supplier_terakhir = $supplier ? $supplier->nama_supplier : 'Tidak diketahui';
+                } else {
+                    $item->supplier_terakhir = 'Tidak diketahui';
+                }
+
+                $item->data_keluar_bulanan = $bulanDataKeluar;
+                $item->nama_bulan = $bulanTahunIndonesia;
+
+                return $item;
+            });
+
+        return $data;
     }
 }

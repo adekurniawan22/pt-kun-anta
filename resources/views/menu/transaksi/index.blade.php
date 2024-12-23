@@ -15,11 +15,13 @@
                     </ol>
                 </nav>
             </div>
-            <div class="ms-auto">
-                <a href="{{ route(session()->get('role') . '.transaksi.create') }}" class="btn btn-success">
-                    <i class="fadeIn animated bx bx-plus"></i>Tambah
-                </a>
-            </div>
+            @if (session()->get('role') != 'manajer_produksi')
+                <div class="ms-auto">
+                    <a href="{{ route(session()->get('role') . '.transaksi.create') }}" class="btn btn-success">
+                        <i class="fadeIn animated bx bx-plus"></i>Tambah
+                    </a>
+                </div>
+            @endif
         </div>
         <!-- End Breadcrumb -->
 
@@ -49,7 +51,9 @@
                                     <th width="20%;">Informasi Bahan Baku</th>
                                     <th width="10%;">Tipe</th>
                                     <th width="45%;">Informasi Tambahan</th>
-                                    <th width="10%;" data-sortable="false">Aksi</th>
+                                    @if (session()->get('role') != 'manajer_produksi')
+                                        <th width="10%;" data-sortable="false">Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,10 +82,11 @@
                                                     class="bi {{ $history->tipe == 'masuk' ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle' }}"></i>
                                                 {{ ucfirst($history->tipe) }}
 
-                                                @if ($history->total != 0)
+                                                @if ($history->harga_per_satuan != null)
                                                     <br>
                                                     <br>
-                                                    Rp. {{ number_format($history->total, 0, ',', '.') }}
+                                                    Rp.
+                                                    {{ number_format($history->jumlah * $history->harga_per_satuan, 0, ',', '.') }}
                                                 @endif
                                             </span>
                                         </td>
@@ -93,47 +98,55 @@
                                                 </small>
                                                 @if (isset($history->keterangan))
                                                     <small
-                                                        style="word-wrap: break-word; white-space: normal;"><em>{{ $history->keterangan }}</em></small>
+                                                        style="word-wrap: break-word; white-space: normal;"><em>({{ $history->keterangan }})</em></small>
                                                 @endif
                                             @else
-                                                <small><em>Tidak ada</em></small>
+                                                @if (isset($history->keterangan))
+                                                    <small
+                                                        style="word-wrap: break-word; white-space: normal;"><em>({{ $history->keterangan }})</em></small>
+                                                @else
+                                                    <small><em>Tidak ada</em></small>
+                                                @endif
                                             @endif
                                         </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-secondary" type="button"
-                                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="bi bi-three-dots me-1"></i>
-                                                    <!-- Ikon tiga titik horizontal -->
-                                                </button>
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <!-- Tombol Edit -->
-                                                    <li>
-                                                        <a href="{{ route(session()->get('role') . '.transaksi.edit', $history->bahan_baku_transaksi_id) }}"
-                                                            class="dropdown-item">
-                                                            <i class="bi bi-pencil-fill me-1"></i> Edit
-                                                        </a>
-                                                    </li>
+                                        @if (session()->get('role') != 'manajer_produksi')
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-secondary" type="button"
+                                                        id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                                        aria-expanded="false">
+                                                        <i class="bi bi-three-dots me-1"></i>
+                                                        <!-- Ikon tiga titik horizontal -->
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <!-- Tombol Edit -->
+                                                        <li>
+                                                            <a href="{{ route(session()->get('role') . '.transaksi.edit', $history->bahan_baku_transaksi_id) }}"
+                                                                class="dropdown-item">
+                                                                <i class="bi bi-pencil-fill me-1"></i> Edit
+                                                            </a>
+                                                        </li>
 
-                                                    <!-- Tombol Hapus -->
-                                                    <li>
-                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                            data-bs-target="#confirmDeleteModal"
-                                                            data-form-id="delete-form-{{ $history->bahan_baku_transaksi_id }}">
-                                                            <i class="bi bi-trash-fill me-1"></i> Hapus
-                                                        </button>
-                                                    </li>
+                                                        <!-- Tombol Hapus -->
+                                                        <li>
+                                                            <button type="button" class="dropdown-item"
+                                                                data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                                                data-form-id="delete-form-{{ $history->bahan_baku_transaksi_id }}">
+                                                                <i class="bi bi-trash-fill me-1"></i> Hapus
+                                                            </button>
+                                                        </li>
 
-                                                    <!-- Form Hapus -->
-                                                    <form id="delete-form-{{ $history->bahan_baku_transaksi_id }}"
-                                                        action="{{ route(session()->get('role') . '.transaksi.destroy', $history->bahan_baku_transaksi_id) }}"
-                                                        method="POST" style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
-                                                </ul>
-                                            </div>
-                                        </td>
+                                                        <!-- Form Hapus -->
+                                                        <form id="delete-form-{{ $history->bahan_baku_transaksi_id }}"
+                                                            action="{{ route(session()->get('role') . '.transaksi.destroy', $history->bahan_baku_transaksi_id) }}"
+                                                            method="POST" style="display: none;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>

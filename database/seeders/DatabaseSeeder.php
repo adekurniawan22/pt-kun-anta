@@ -92,7 +92,6 @@ class DatabaseSeeder extends Seeder
                 'nama_bahan_baku' => $namaBahanBaku,
                 'satuan' => ['Kilogram', 'Liter'][array_rand(['Kilogram', 'Liter'])],
                 'stok_minimal' => rand(10, 50),
-                'harga_per_satuan' => rand(15000, 150000),
                 'dibuat_oleh' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -122,7 +121,7 @@ class DatabaseSeeder extends Seeder
                 'tipe' => 'masuk',
                 'tanggal_transaksi' => $startDate->format('Y-m-d'),
                 'jumlah' => $jumlahMasuk,
-                'total' => $jumlahMasuk * $hargaPerSatuan,
+                'harga_per_satuan' => $hargaPerSatuan,
                 'keterangan' => "Transaksi masuk awal bulan {$bulanIndonesia} {$startDate->format('Y')}",
                 'supplier_id' => rand(1, 9),
                 'dibuat_oleh' => $penggunaIds[array_rand($penggunaIds)],
@@ -130,21 +129,12 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
-            // Update harga_per_satuan di tabel bahan_baku
-            DB::table('bahan_baku')
-                ->where('bahan_baku_id', $selectedBahanBakuId)
-                ->update([
-                    'harga_per_satuan' => $hargaPerSatuan
-                ]);
-
             // Generate transaksi keluar
             $outTransactionsCount = rand(2, 5);
             $totalKeluar = 0;
 
             for ($i = 0; $i < $outTransactionsCount; $i++) {
                 if ($totalKeluar >= $jumlahMasuk) break;
-
-                // Hanya gunakan bahan baku yang sudah memiliki transaksi masuk
                 $validBahanBakuIds = array_keys($bahanBakuMasuk);
                 $selectedKeluarBahanBakuId = $validBahanBakuIds[array_rand($validBahanBakuIds)];
 
@@ -154,7 +144,7 @@ class DatabaseSeeder extends Seeder
                     'tipe' => 'keluar',
                     'tanggal_transaksi' => $startDate->format('Y-m-d'),
                     'jumlah' => $jumlahKeluar,
-                    'total' => null,
+                    'harga_per_satuan' => null,
                     'keterangan' => "Transaksi keluar bulan {$bulanIndonesia} {$startDate->format('Y')}",
                     'dibuat_oleh' => $penggunaIds[array_rand($penggunaIds)],
                     'created_at' => now(),

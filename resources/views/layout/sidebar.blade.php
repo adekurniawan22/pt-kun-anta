@@ -21,29 +21,34 @@
                     <div class="menu-title">Dashboard</div>
                 </a>
             </li>
-            <li class="{{ Request::is('manajer-produksi/supplier*') ? 'mm-active' : '' }}">
-                <a href="<?= url('manajer-produksi/supplier') ?>">
+            <li class="{{ Request::is('manajer/supplier*') ? 'mm-active' : '' }}">
+                <a href="{{ url('manajer/supplier') }}">
                     <div class="parent-icon"><i class="bi bi-people"></i></div>
                     <div class="menu-title">Supplier</div>
                 </a>
             </li>
-            <li class="{{ Request::is('manajer-produksi/bahan-baku*') ? 'mm-active' : '' }}">
-                <a href="<?= url('manajer-produksi/bahan-baku') ?>">
-                    <div class="parent-icon"><i class="bi bi-basket"></i></div>
+            <li class="{{ Request::is('manajer/bahan-baku*') ? 'mm-active' : '' }}">
+                <a href="#" class="has-arrow">
+                    <div class="parent-icon"><i class="bi bi-box"></i></div>
                     <div class="menu-title">Bahan Baku</div>
                 </a>
-            </li>
-            <li class="{{ Request::is('manajer-produksi/transaksi*') ? 'mm-active' : '' }}">
-                <a href="<?= url('manajer-produksi/transaksi') ?>">
-                    <div class="parent-icon"><i class="bi bi-clock-history"></i></div>
-                    <div class="menu-title">Transaksi Bahan Baku</div>
-                </a>
-            </li>
-            <li class="{{ Request::is('manajer-produksi/peramalan*') ? 'mm-active' : '' }}">
-                <a href="<?= url('manajer-produksi/peramalan') ?>">
-                    <div class="parent-icon"><i class="bi bi-clock-history"></i></div>
-                    <div class="menu-title">Peramalan</div>
-                </a>
+                <ul>
+                    <li class="{{ Request::is('manajer/bahan-baku/master*') ? 'mm-active' : '' }}">
+                        <a href="{{ url('manajer/bahan-baku/master') }}">
+                            <i class="bi bi-basket" style="font-size: 15px; margin-left: 25px;"></i> Master
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('manajer/bahan-baku/transaksi*') ? 'mm-active' : '' }}">
+                        <a href="{{ url('manajer/bahan-baku/transaksi') }}">
+                            <i class="bi bi-clock-history" style="font-size: 15px; margin-left: 25px;"></i> Transaksi
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('manajer/bahan-baku/peramalan*') ? 'mm-active' : '' }}">
+                        <a href="{{ url('manajer/bahan-baku/peramalan') }}">
+                            <i class="bi bi-graph-up" style="font-size: 15px; margin-left: 25px;"></i> Peramalan
+                        </a>
+                    </li>
+                </ul>
             </li>
         @endif
 
@@ -56,8 +61,8 @@
                 </a>
             </li>
 
-            <li class="{{ Request::is('supervisor/transaksi*') ? 'mm-active' : '' }}">
-                <a href="<?= url('supervisor/transaksi') ?>">
+            <li class="{{ Request::is('supervisor/bahan-baku/transaksi*') ? 'mm-active' : '' }}">
+                <a href="<?= url('supervisor/bahan-baku/transaksi') ?>">
                     <div class="parent-icon"><i class="bi bi-clock-history"></i></div>
                     <div class="menu-title">Transaksi Bahan Baku</div>
                 </a>

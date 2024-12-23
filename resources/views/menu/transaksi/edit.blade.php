@@ -1,7 +1,6 @@
 @extends('layout.main')
 
 @section('style')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .select2-container--default .select2-selection--single {
             min-height: 38px !important;
@@ -40,6 +39,7 @@
         .select2-container .select2-selection--single .select2-selection__rendered {
             padding-left: 0;
             padding-right: 20px;
+            font-size: 0.9rem !important;
         }
 
         /* Style untuk clear button */
@@ -59,6 +59,7 @@
             border: 1px solid #ced4da;
             border-radius: 0.375rem;
             margin-bottom: 5px;
+            font-size: 0.9rem !important;
         }
 
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -171,98 +172,127 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="form-group mb-3">
-                            <label for="bahan_baku_id" class="form-label">Bahan Baku</label>
-                            <select name="bahan_baku_id" id="bahan_baku_id"
-                                class="form-select @error('bahan_baku_id') is-invalid @enderror select2-bahan-baku">
-                                <option value="">Pilih Bahan Baku</option>
-                                @foreach ($bahanBaku as $data)
-                                    <option value="{{ $data->bahan_baku_id }}"
-                                        {{ old('bahan_baku_id', $bahanBakuTransaksi->bahan_baku_id) == $data->bahan_baku_id ? 'selected' : '' }}>
-                                        {{ $data->nama_bahan_baku }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('bahan_baku_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label for="tipe" class="form-label">Tipe transaksi</label>
+                                    <select name="tipe" id="tipe"
+                                        class="form-select @error('tipe') is-invalid @enderror">
+                                        <option value="">Pilih tipe transaksi</option>
+                                        <option value="masuk"
+                                            {{ old('tipe', $bahanBakuTransaksi->tipe) === 'masuk' ? 'selected' : '' }}>Masuk
+                                        </option>
+                                        <option value="keluar"
+                                            {{ old('tipe', $bahanBakuTransaksi->tipe) === 'keluar' ? 'selected' : '' }}>
+                                            Keluar</option>
+                                    </select>
+                                    @error('tipe')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
-                        <div class="form-group mb-3">
-                            <label for="tipe" class="form-label">Tipe Transaksi</label>
-                            <select name="tipe" id="tipe" class="form-select @error('tipe') is-invalid @enderror">
-                                <option value="">Pilih Tipe Transaksi</option>
-                                <option value="masuk"
-                                    {{ old('tipe', $bahanBakuTransaksi->tipe) == 'masuk' ? 'selected' : '' }}>
-                                    Masuk
-                                </option>
-                                <option value="keluar"
-                                    {{ old('tipe', $bahanBakuTransaksi->tipe) == 'keluar' ? 'selected' : '' }}>
-                                    Keluar
-                                </option>
-                            </select>
-                            @error('tipe')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label for="tanggal_transaksi" class="form-label">Tanggal Transaksi</label>
+                                    <input type="date" name="tanggal_transaksi" id="tanggal_transaksi"
+                                        class="form-control @error('tanggal_transaksi') is-invalid @enderror"
+                                        value="{{ old('tanggal_transaksi', $bahanBakuTransaksi->tanggal_transaksi) }}">
+                                    @error('tanggal_transaksi')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
-                        <div class="form-group mb-3" style="display: none">
-                            <label for="supplier_id" class="form-label">Supplier</label>
-                            <select name="supplier_id" id="supplier_id"
-                                class="form-select select2-supplier @error('supplier_id') is-invalid @enderror">
-                                <option value="">Pilih Supplier</option>
-                                @foreach ($suppliers as $supplier)
-                                    <option value="{{ $supplier->supplier_id }}"
-                                        {{ old('supplier_id', $bahanBakuTransaksi->supplier_id) == $supplier->supplier_id ? 'selected' : '' }}>
-                                        {{ $supplier->nama_supplier }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('supplier_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="tanggal_transaksi">Tanggal Transaksi</label>
-                            <input type="date" id="tanggal_transaksi" name="tanggal_transaksi"
-                                class="form-control @error('tanggal_transaksi') is-invalid @enderror"
-                                value="{{ old('tanggal_transaksi', $bahanBakuTransaksi->tanggal_transaksi ? $bahanBakuTransaksi->tanggal_transaksi : '') }}">
-                            @error('tanggal_transaksi')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label for="bahan_baku_id" class="form-label">Bahan Baku</label>
+                                    <select name="bahan_baku_id" id="bahan_baku_id"
+                                        class="form-select @error('bahan_baku_id') is-invalid @enderror select2-bahan-baku">
+                                        <option value="">Pilih Bahan Baku</option>
+                                        @foreach ($bahanBaku as $data)
+                                            <option value="{{ $data->bahan_baku_id }}"
+                                                {{ old('bahan_baku_id', $bahanBakuTransaksi->bahan_baku_id) == $data->bahan_baku_id ? 'selected' : '' }}>
+                                                {{ $data->nama_bahan_baku }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('bahan_baku_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="jumlah">Jumlah</label>
-                            <input type="number" id="jumlah" name="jumlah"
-                                class="form-control @error('jumlah') is-invalid @enderror"
-                                value="{{ old('jumlah', $bahanBakuTransaksi->jumlah) }}"
-                                placeholder="Masukkan jumlah bahan baku">
-                            @error('jumlah')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                            <div class="col-12">
+                                <div id="supplier_container" class="form-group mb-3" style="display: none">
+                                    <label for="supplier_id" class="form-label">Supplier</label>
+                                    <select name="supplier_id" id="supplier_id"
+                                        class="form-select select2-supplier @error('supplier_id') is-invalid @enderror">
+                                        <option value="">Pilih Supplier</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->supplier_id }}"
+                                                {{ old('supplier_id', $bahanBakuTransaksi->supplier_id) == $supplier->supplier_id ? 'selected' : '' }}>
+                                                {{ $supplier->nama_supplier }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('supplier_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="keterangan">Keterangan</label>
-                            <textarea id="keterangan" name="keterangan" class="form-control @error('keterangan') is-invalid @enderror"
-                                rows="3" placeholder="Masukkan keterangan">{{ old('keterangan', $bahanBakuTransaksi->keterangan) }}</textarea>
-                            @error('keterangan')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="jumlah">Jumlah</label>
+                                    <input type="number" id="jumlah" name="jumlah"
+                                        class="form-control @error('jumlah') is-invalid @enderror"
+                                        value="{{ old('jumlah', $bahanBakuTransaksi->jumlah) }}"
+                                        placeholder="Masukkan jumlah bahan baku">
+                                    @error('jumlah')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="form-group mb-3" id="harga_per_satuan_container" style="display: none">
+                                    <label class="form-label" for="harga_per_satuan">Harga Per Satuan</label>
+                                    <input type="number" id="harga_per_satuan" name="harga_per_satuan"
+                                        class="form-control @error('harga_per_satuan') is-invalid @enderror"
+                                        value="{{ old('harga_per_satuan', $bahanBakuTransaksi->harga_per_satuan) }}"
+                                        placeholder="Silakan masukkan harga yang valid">
+                                    @error('harga_per_satuan')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="keterangan">Keterangan</label>
+                                    <textarea id="keterangan" name="keterangan" class="form-control @error('keterangan') is-invalid @enderror"
+                                        rows="3" placeholder="Masukkan keterangan">{{ old('keterangan', $bahanBakuTransaksi->keterangan) }}</textarea>
+                                    @error('keterangan')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-end mb-3 mt-4">
@@ -280,10 +310,8 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            // Inisialisasi Select2 untuk Bahan Baku dan Supplier
             $('.select2-bahan-baku').select2({
-                placeholder: 'Pilih Bahan Baku',
-                allowClear: true,
+                placeholder: 'Pilih bahan baku',
                 theme: 'default',
                 width: '100%',
                 minimumResultsForSearch: 0,
@@ -298,8 +326,7 @@
             });
 
             $('.select2-supplier').select2({
-                placeholder: 'Pilih Supplier',
-                allowClear: true,
+                placeholder: 'Pilih supplier',
                 theme: 'default',
                 width: '100%',
                 minimumResultsForSearch: 0,
@@ -313,31 +340,87 @@
                 }
             });
 
-            // Fungsi untuk menampilkan/menyembunyikan elemen Supplier dan menyesuaikan validasi
             function toggleSupplier() {
                 const tipe = $('#tipe').val();
-                const supplierField = $('#supplier_id');
+                const supplier_container = $('#supplier_container');
+                const harga_per_satuan_container = $('#harga_per_satuan_container');
+                const supplierSelect = $(`#supplier_id`);
+                const bahanBakuSelect = $(`#bahan_baku_id`);
+                const jumlahCol = $(`#jumlah`).parent().parent();
+                const hargaCol = $(`#harga`).parent().parent();
+                const hargaInput = $(`#harga`);
 
                 if (tipe === 'masuk') {
-                    // Menampilkan elemen Supplier
-                    supplierField.closest('.form-group').show();
-                    // Menambahkan validasi required pada supplier_id
-                    // supplierField.prop('required', true);
+                    jumlahCol.removeClass('col-12').addClass('col-6');
+                    hargaCol.show();
+                    supplier_container.slideDown();
+                    harga_per_satuan_container.slideDown();
+
+                    const bahanBakuId = bahanBakuSelect.val();
+                    loadSuppliers(bahanBakuId, supplierSelect);
                 } else {
-                    // Menyembunyikan elemen Supplier jika tipe keluar
-                    supplierField.closest('.form-group').hide();
-                    // Menghapus nilai supplier_id dan tidak diperlukan saat tipe keluar
-                    supplierField.prop('required', false);
-                    supplierField.val('');
+                    jumlahCol.removeClass('col-6').addClass('col-12');
+                    supplier_container.slideUp();
+                    hargaCol.hide();
+                    harga_per_satuan_container.slideUp();
                 }
             }
 
-            // Event Listener untuk perubahan tipe transaksi
+            $(document).on('change', '.select2-bahan-baku', function() {
+                const tipeTransaksi = $(`#tipe`).val();
+                const supplierSelect = $(`#supplier_id`);
+
+                if (tipeTransaksi === 'masuk') {
+                    const bahanBakuId = $(this).val();
+                    loadSuppliers(bahanBakuId, supplierSelect);
+                }
+            });
+
+            function loadSuppliers(bahanBakuId, supplierSelect) {
+                if (bahanBakuId) {
+                    $.ajax({
+                        url: `{{ route('suppliers.by-bahan-baku', ['bahanBakuId' => ':bahanBakuId']) }}`
+                            .replace(':bahanBakuId', bahanBakuId),
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            const labelElement = $(`label[for="supplier_id"]`);
+
+                            supplierSelect.empty();
+                            supplierSelect.append('<option value="">Pilih supplier</option>');
+
+                            $.each(data, function(key, value) {
+                                supplierSelect.append(
+                                    `<option value="${value.supplier_id}">${value.nama_supplier}</option>`
+                                );
+                            });
+
+                            labelElement.html(
+                                `Supplier <span class="text-danger">*</span><br><small class="text-muted fst-italic">(Ada ${data.length} Supplier)</small>`
+                            );
+
+                            if (data.length > 0) {
+                                supplierSelect.prop('selectedIndex',
+                                    1
+                                );
+                                supplierSelect.trigger('change');
+                            }
+                        }
+                    });
+                } else {
+                    const labelElement = $(`label[for="supplier_id"]`);
+
+                    supplierSelect.empty();
+                    supplierSelect.append('<option value="">Pilih Supplier</option>');
+                    labelElement.html(`Supplier <span class="text-danger">*</span>`);
+                }
+            }
+
             $('#tipe').on('change', function() {
                 toggleSupplier();
             });
 
-            // Panggil fungsi toggleSupplier saat halaman dimuat untuk inisialisasi
             toggleSupplier();
         });
     </script>
