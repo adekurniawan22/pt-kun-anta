@@ -76,7 +76,7 @@ class BahanBaku extends Model
             )
             ->where('bbt.tipe', 'keluar')
             ->whereBetween('bbt.tanggal_transaksi', [
-                $startDate->copy()->startOfMonth()->subMonths($numberOfMonths - 1),
+                $startDate->copy()->startOfMonth()->subMonths($numberOfMonths),
                 $startDate->copy()->endOfMonth()
             ])
             ->groupBy('bahan_baku_id', 'bulan')
@@ -91,12 +91,13 @@ class BahanBaku extends Model
             )
             ->where('bbt.tipe', 'masuk')
             ->whereBetween('bbt.tanggal_transaksi', [
-                $startDate->copy()->startOfMonth()->subMonths($numberOfMonths - 1),
+                $startDate->copy()->startOfMonth()->subMonths($numberOfMonths),
                 $startDate->copy()->endOfMonth()
             ])
             ->groupBy('bahan_baku_id', 'bulan')
             ->get()
             ->groupBy('bahan_baku_id');
+
 
         $latestSuppliers = DB::table('bahan_baku_transaksi as bbt')
             ->join('supplier as s', 's.supplier_id', '=', 'bbt.supplier_id')
