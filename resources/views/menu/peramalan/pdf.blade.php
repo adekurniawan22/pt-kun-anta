@@ -130,7 +130,7 @@
                         </td>
                         <td>
                             @if (isset($data['supplier_terakhir']['harga_per_satuan']) && isset($data['supplier_terakhir']['nama_supplier']))
-                                Harga per satuan : <strong>Rp
+                                Harga per {{ $data['satuan'] ?? '-' }} : <strong>Rp
                                     {{ number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') }}</strong>
                                 <br>
                                 Supplier : <strong>{{ $data['supplier_terakhir']['nama_supplier'] }}</strong>

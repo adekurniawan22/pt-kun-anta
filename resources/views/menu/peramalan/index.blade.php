@@ -109,7 +109,7 @@
                                         <strong>Supplier terakhir:</strong>
                                         {{ $data['supplier_terakhir']['nama_supplier'] ?? 'Belum ada' }}<br>
 
-                                        <strong>Harga per satuan terakhir:</strong>
+                                        <strong>Harga per {{ $data['satuan'] ?? '-' }} terakhir:</strong>
                                         {{ isset($data['supplier_terakhir']['harga_per_satuan']) && is_numeric($data['supplier_terakhir']['harga_per_satuan']) ? 'Rp. ' . number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') : 'Belum ada' }}
                                     </td>
                                 </tr>
