@@ -58,6 +58,13 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $history)
+                                    @php
+                                        if ($history->tipe == 'masuk') {
+                                            $bahan_baku_transaksi_id = $history->id;
+                                        } else {
+                                            $bahan_baku_transaksi_id = $history->id;
+                                        }
+                                    @endphp
                                     <tr data-tipe="{{ $history->tipe }}">
                                         <td
                                             data-order="{{ \Carbon\Carbon::parse($history->tanggal_transaksi)->format('Y-m-d') }}">
@@ -121,7 +128,7 @@
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                         <!-- Tombol Edit -->
                                                         <li>
-                                                            <a href="{{ route(session()->get('role') . '.transaksi.edit', $history->bahan_baku_transaksi_id) }}"
+                                                            <a href="{{ route('admin.transaksi.edit', ['tipe' => $history->tipe, 'id' => $bahan_baku_transaksi_id]) }}"
                                                                 class="dropdown-item">
                                                                 <i class="bi bi-pencil-fill me-1"></i> Edit
                                                             </a>
@@ -131,18 +138,20 @@
                                                         <li>
                                                             <button type="button" class="dropdown-item"
                                                                 data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
-                                                                data-form-id="delete-form-{{ $history->bahan_baku_transaksi_id }}">
+                                                                data-form-id="delete-form-{{ $history->tipe }}-{{ $bahan_baku_transaksi_id }}">
                                                                 <i class="bi bi-trash-fill me-1"></i> Hapus
                                                             </button>
                                                         </li>
 
                                                         <!-- Form Hapus -->
-                                                        <form id="delete-form-{{ $history->bahan_baku_transaksi_id }}"
-                                                            action="{{ route(session()->get('role') . '.transaksi.destroy', $history->bahan_baku_transaksi_id) }}"
+                                                        <form
+                                                            id="delete-form-{{ $history->tipe }}-{{ $bahan_baku_transaksi_id }}"
+                                                            action="{{ route(session()->get('role') . '.transaksi.destroy', ['tipe' => $history->tipe, 'id' => $bahan_baku_transaksi_id]) }}"
                                                             method="POST" style="display: none;">
                                                             @csrf
                                                             @method('DELETE')
                                                         </form>
+
                                                     </ul>
                                                 </div>
                                             </td>
@@ -214,6 +223,7 @@
             deleteButtons.forEach(function(button) {
                 button.addEventListener('click', function() {
                     var formId = button.getAttribute('data-form-id');
+                    console.log(formId);
                     confirmDeleteButton.setAttribute('data-form-id', formId);
                 });
             });

@@ -8,20 +8,14 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('bahan_baku_transaksi', function (Blueprint $table) {
-            $table->id('bahan_baku_transaksi_id');
+        Schema::create('transaksi_keluar', function (Blueprint $table) {
+            $table->id('transaksi_keluar_id');
             $table->foreignId('bahan_baku_id')
                 ->constrained('bahan_baku', 'bahan_baku_id')
                 ->onDelete('restrict');
-            $table->enum('tipe', ['masuk', 'keluar']);
             $table->date('tanggal_transaksi');
             $table->integer('jumlah');
-            $table->integer('harga_per_satuan')->nullable();
             $table->string('keterangan', 255)->nullable();
-            $table->foreignId('supplier_id')
-                ->nullable()
-                ->constrained('supplier', 'supplier_id')
-                ->onDelete('restrict');
             $table->unsignedBigInteger('dibuat_oleh')->nullable();
             $table->foreign('dibuat_oleh')
                 ->references('pengguna_id')
@@ -33,6 +27,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('bahan_baku_transaksi');
+        Schema::dropIfExists('transaksi_keluar');
     }
 };

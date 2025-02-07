@@ -166,11 +166,19 @@
         <div class="row ms-0 me-1">
             <div class="card radius-10 w-100">
                 <div class="card-body">
+                    @php
+                        if ($tipe === 'masuk') {
+                            $bahan_baku_transaksi_id = $bahanBakuTransaksi->transaksi_masuk_id;
+                        } else {
+                            $bahan_baku_transaksi_id = $bahanBakuTransaksi->transaksi_keluar_id;
+                        }
+                    @endphp
                     <form
-                        action="{{ route(session()->get('role') . '.transaksi.update', $bahanBakuTransaksi->bahan_baku_transaksi_id) }}"
+                        action="{{ route(session()->get('role') . '.transaksi.update', ['tipe' => $tipe, 'id' => $bahan_baku_transaksi_id]) }}"
                         method="POST">
                         @csrf
                         @method('PUT')
+
 
                         <div class="row">
                             <div class="col-6">
@@ -179,11 +187,9 @@
                                     <select name="tipe" id="tipe"
                                         class="form-select @error('tipe') is-invalid @enderror">
                                         <option value="">Pilih tipe transaksi</option>
-                                        <option value="masuk"
-                                            {{ old('tipe', $bahanBakuTransaksi->tipe) === 'masuk' ? 'selected' : '' }}>Masuk
+                                        <option value="masuk" {{ old('tipe', $tipe) === 'masuk' ? 'selected' : '' }}>Masuk
                                         </option>
-                                        <option value="keluar"
-                                            {{ old('tipe', $bahanBakuTransaksi->tipe) === 'keluar' ? 'selected' : '' }}>
+                                        <option value="keluar" {{ old('tipe', $tipe) === 'keluar' ? 'selected' : '' }}>
                                             Keluar</option>
                                     </select>
                                     @error('tipe')

@@ -116,9 +116,8 @@ class DatabaseSeeder extends Seeder
             $bahanBakuMasuk[$selectedBahanBakuId] = true;
 
             // Insert transaksi masuk
-            DB::table('bahan_baku_transaksi')->insert([
+            DB::table('transaksi_masuk')->insert([
                 'bahan_baku_id' => $selectedBahanBakuId,
-                'tipe' => 'masuk',
                 'tanggal_transaksi' => $startDate->format('Y-m-d'),
                 'jumlah' => $jumlahMasuk,
                 'harga_per_satuan' => $hargaPerSatuan,
@@ -139,12 +138,10 @@ class DatabaseSeeder extends Seeder
                 $selectedKeluarBahanBakuId = $validBahanBakuIds[array_rand($validBahanBakuIds)];
 
                 $jumlahKeluar = rand(1, min(50, $jumlahMasuk - $totalKeluar));
-                DB::table('bahan_baku_transaksi')->insert([
+                DB::table('transaksi_keluar')->insert([
                     'bahan_baku_id' => $selectedKeluarBahanBakuId,
-                    'tipe' => 'keluar',
                     'tanggal_transaksi' => $startDate->format('Y-m-d'),
                     'jumlah' => $jumlahKeluar,
-                    'harga_per_satuan' => null,
                     'keterangan' => "Transaksi keluar bulan {$bulanIndonesia} {$startDate->format('Y')}",
                     'dibuat_oleh' => $penggunaIds[array_rand($penggunaIds)],
                     'created_at' => now(),

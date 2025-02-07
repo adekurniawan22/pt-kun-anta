@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Supplier, BahanBaku, BahanBakuTransaksi, Pengguna};
+use App\Models\{Supplier, BahanBaku, TransaksiMasuk, Pengguna, TransaksiKeluar};
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,7 +12,7 @@ class DashboardController extends Controller
 {
     public function manajer_produksi()
     {
-        $topBahanBaku = BahanBakuTransaksi::where('tipe', 'masuk')
+        $topBahanBaku = TransaksiMasuk::query()
             ->select(
                 'bahan_baku_id',
                 DB::raw('count(*) as total_pembelian'),
@@ -27,7 +27,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $topSupplier = BahanBakuTransaksi::where('tipe', 'masuk')
+        $topSupplier = TransaksiMasuk::query()
             ->select('supplier_id', DB::raw('count(*) as total_transaksi'))
             ->whereNotNull('supplier_id')
             ->with('supplier:supplier_id,nama_supplier')
@@ -38,11 +38,8 @@ class DashboardController extends Controller
 
         $bahanBaku = BahanBaku::all();
 
-        $currentStocks = DB::table('bahan_baku_transaksi')
-            ->select(
-                'bahan_baku_id',
-                DB::raw('COALESCE(SUM(CASE WHEN tipe = "masuk" THEN jumlah ELSE -jumlah END), 0) as total_stok')
-            )
+        $currentStocks = DB::table('transaksi_masuk')
+            ->selectRaw('bahan_baku_id, COALESCE(SUM(jumlah), 0) as total_stok')
             ->groupBy('bahan_baku_id')
             ->get()
             ->keyBy('bahan_baku_id');
@@ -78,11 +75,11 @@ class DashboardController extends Controller
             'title' => 'Dashboard Manajer Produksi',
             'jumlahSupplier' => Supplier::count(),
             'jumlahBahanBaku' => BahanBaku::count(),
-            'jumlahTransaksiMasukBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'masuk')
+            'jumlahTransaksiMasukBulanIni' => TransaksiMasuk::query()
                 ->whereMonth('tanggal_transaksi', Carbon::now()->month)
                 ->whereYear('tanggal_transaksi', Carbon::now()->year)
                 ->count(),
-            'jumlahTransaksiKeluarBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'keluar')
+            'jumlahTransaksiKeluarBulanIni' => TransaksiKeluar::query()
                 ->whereMonth('tanggal_transaksi', Carbon::now()->month)
                 ->whereYear('tanggal_transaksi', Carbon::now()->year)
                 ->count(),
@@ -110,7 +107,7 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        $topBahanBaku = BahanBakuTransaksi::where('tipe', 'masuk')
+        $topBahanBaku = TransaksiMasuk::query()
             ->select(
                 'bahan_baku_id',
                 DB::raw('count(*) as total_pembelian'),
@@ -125,7 +122,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        $topSupplier = BahanBakuTransaksi::where('tipe', 'masuk')
+        $topSupplier = TransaksiMasuk::query()
             ->select('supplier_id', DB::raw('count(*) as total_transaksi'))
             ->whereNotNull('supplier_id')
             ->with('supplier:supplier_id,nama_supplier')
@@ -136,11 +133,8 @@ class DashboardController extends Controller
 
         $bahanBaku = BahanBaku::all();
 
-        $currentStocks = DB::table('bahan_baku_transaksi')
-            ->select(
-                'bahan_baku_id',
-                DB::raw('COALESCE(SUM(CASE WHEN tipe = "masuk" THEN jumlah ELSE -jumlah END), 0) as total_stok')
-            )
+        $currentStocks = DB::table('transaksi_masuk')
+            ->selectRaw('bahan_baku_id, COALESCE(SUM(jumlah), 0) as total_stok')
             ->groupBy('bahan_baku_id')
             ->get()
             ->keyBy('bahan_baku_id');
@@ -177,11 +171,11 @@ class DashboardController extends Controller
             'jumlahPengguna' => Pengguna::count(),
             'jumlahSupplier' => Supplier::count(),
             'jumlahBahanBaku' => BahanBaku::count(),
-            'jumlahTransaksiMasukBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'masuk')
+            'jumlahTransaksiMasukBulanIni' => TransaksiMasuk::query()
                 ->whereMonth('tanggal_transaksi', Carbon::now()->month)
                 ->whereYear('tanggal_transaksi', Carbon::now()->year)
                 ->count(),
-            'jumlahTransaksiKeluarBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'keluar')
+            'jumlahTransaksiKeluarBulanIni' => TransaksiMasuk::query()
                 ->whereMonth('tanggal_transaksi', Carbon::now()->month)
                 ->whereYear('tanggal_transaksi', Carbon::now()->year)
                 ->count(),

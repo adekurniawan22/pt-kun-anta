@@ -21,9 +21,14 @@ class BahanBaku extends Model
         return $this->belongsTo(Pengguna::class, 'dibuat_oleh', 'pengguna_id');
     }
 
-    public function transaksi()
+    public function transaksi_masuk()
     {
-        return $this->hasMany(BahanBakuTransaksi::class, 'bahan_baku_id', 'bahan_baku_id');
+        return $this->hasMany(TransaksiMasuk::class, 'bahan_baku_id');
+    }
+
+    public function transaksi_keluar()
+    {
+        return $this->hasMany(TransaksiKeluar::class, 'bahan_baku_id');
     }
 
     protected static $namaBulan = [
@@ -59,23 +64,30 @@ class BahanBaku extends Model
 
         $bahanBaku = self::all();
 
-        $currentStocks = DB::table('bahan_baku_transaksi')
-            ->select(
-                'bahan_baku_id',
-                DB::raw('SUM(CASE WHEN tipe = "masuk" THEN jumlah ELSE -jumlah END) as total_stok')
-            )
-            ->groupBy('bahan_baku_id')
+        $currentStocks = DB::table('bahan_baku as bb')
+            ->select('bb.bahan_baku_id', DB::raw('
+            (COALESCE(masuk.total_masuk, 0) - COALESCE(keluar.total_keluar, 0)) as total_stok
+        '))
+            ->leftJoin(DB::raw('(
+            SELECT bahan_baku_id, SUM(jumlah) as total_masuk
+            FROM transaksi_masuk
+            GROUP BY bahan_baku_id
+        ) masuk'), 'masuk.bahan_baku_id', '=', 'bb.bahan_baku_id')
+            ->leftJoin(DB::raw('(
+            SELECT bahan_baku_id, SUM(jumlah) as total_keluar 
+            FROM transaksi_keluar
+            GROUP BY bahan_baku_id
+        ) keluar'), 'keluar.bahan_baku_id', '=', 'bb.bahan_baku_id')
             ->get()
             ->keyBy('bahan_baku_id');
 
-        $monthlyOutgoing = DB::table('bahan_baku_transaksi as bbt')
+        $monthlyOutgoing = DB::table('transaksi_keluar as tk')
             ->select(
-                'bbt.bahan_baku_id',
-                DB::raw('DATE_FORMAT(bbt.tanggal_transaksi, "%Y-%m") as bulan'),
-                DB::raw('SUM(bbt.jumlah) as jumlah_keluar'),
+                'tk.bahan_baku_id',
+                DB::raw('DATE_FORMAT(tk.tanggal_transaksi, "%Y-%m") as bulan'),
+                DB::raw('SUM(tk.jumlah) as jumlah_keluar'),
             )
-            ->where('bbt.tipe', 'keluar')
-            ->whereBetween('bbt.tanggal_transaksi', [
+            ->whereBetween('tk.tanggal_transaksi', [
                 $startDate->copy()->startOfMonth()->subMonths($numberOfMonths),
                 $startDate->copy()->endOfMonth()
             ])
@@ -83,14 +95,13 @@ class BahanBaku extends Model
             ->get()
             ->groupBy('bahan_baku_id');
 
-        $monthlyIngoing = DB::table('bahan_baku_transaksi as bbt')
+        $monthlyIngoing = DB::table('transaksi_masuk as tm')
             ->select(
-                'bbt.bahan_baku_id',
-                DB::raw('DATE_FORMAT(bbt.tanggal_transaksi, "%Y-%m") as bulan'),
-                DB::raw('SUM(bbt.jumlah) as jumlah_masuk')
+                'tm.bahan_baku_id',
+                DB::raw('DATE_FORMAT(tm.tanggal_transaksi, "%Y-%m") as bulan'),
+                DB::raw('SUM(tm.jumlah) as jumlah_masuk')
             )
-            ->where('bbt.tipe', 'masuk')
-            ->whereBetween('bbt.tanggal_transaksi', [
+            ->whereBetween('tm.tanggal_transaksi', [
                 $startDate->copy()->startOfMonth()->subMonths($numberOfMonths),
                 $startDate->copy()->endOfMonth()
             ])
@@ -98,23 +109,20 @@ class BahanBaku extends Model
             ->get()
             ->groupBy('bahan_baku_id');
 
-
-        $latestSuppliers = DB::table('bahan_baku_transaksi as bbt')
-            ->join('supplier as s', 's.supplier_id', '=', 'bbt.supplier_id')
+        $latestSuppliers = DB::table('transaksi_masuk as tm')
+            ->join('supplier as s', 's.supplier_id', '=', 'tm.supplier_id')
             ->select(
-                'bbt.bahan_baku_id',
-                'bbt.supplier_id',
+                'tm.bahan_baku_id',
+                'tm.supplier_id',
                 's.nama_supplier',
-                'bbt.harga_per_satuan',
-                'bbt.tanggal_transaksi'
+                'tm.harga_per_satuan',
+                'tm.tanggal_transaksi'
             )
-            ->where('bbt.tipe', 'masuk')
-            ->whereNotNull('bbt.supplier_id')
-            ->whereNotNull('bbt.harga_per_satuan')
-            ->whereIn(DB::raw('(bbt.bahan_baku_id, bbt.tanggal_transaksi)'), function ($query) {
+            ->whereNotNull('tm.supplier_id')
+            ->whereNotNull('tm.harga_per_satuan')
+            ->whereIn(DB::raw('(tm.bahan_baku_id, tm.tanggal_transaksi)'), function ($query) {
                 $query->select('bahan_baku_id', DB::raw('MAX(tanggal_transaksi)'))
-                    ->from('bahan_baku_transaksi')
-                    ->where('tipe', 'masuk')
+                    ->from('transaksi_masuk')
                     ->whereNotNull('supplier_id')
                     ->groupBy('bahan_baku_id');
             })
@@ -147,9 +155,13 @@ class BahanBaku extends Model
 
             $currentStock = $currentStocks->get($item->bahan_baku_id)->total_stok ?? 0;
 
-            // New prediction calculation using the formula: average - current_stock + minimum_stock
-            $prediksiKeluar = round($averageKeluar - $currentStock + $item->stok_minimal);
-            $prediksiMasuk = round($averageMasuk - $currentStock + $item->stok_minimal);
+            if ($currentStock < $item->stok_minimal) {
+                $prediksiKeluar = round($averageKeluar - $currentStock + $item->stok_minimal);
+                $prediksiMasuk = round($averageMasuk - $currentStock + $item->stok_minimal);
+            } else {
+                $prediksiKeluar = round($averageKeluar);
+                $prediksiMasuk = round($averageMasuk);
+            }
 
             $prediksiData = [
                 'bulan' => self::formatBulan($startDate),

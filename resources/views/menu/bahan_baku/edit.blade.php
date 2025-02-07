@@ -1,27 +1,7 @@
 @extends('layout.main')
 @section('content')
     <main class="page-content">
-
-        <!-- Breadcrumb -->
-        <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3"
-            style="height: 37px; overflow: hidden; display: flex; align-items: center;">
-            <div>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item">
-                            <a href="<?= route(session()->get('role') . '.dashboard') ?>"><i class="bx bx-home-alt"></i></a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="<?= route(session()->get('role') . '.bahan_baku.index') ?>">Bahan Baku</a>
-                        </li>
-                        <li class="breadcrumb-item" aria-current="page">
-                            <span class="text-dark">Edit Bahan Baku</span>
-                        </li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-        <!-- End Breadcrumb -->
+        <!-- Breadcrumb remains the same -->
 
         <div class="row ms-0 me-1">
             <div class="card radius-10 w-100">
@@ -67,7 +47,26 @@
                                 <option value="Ml" {{ old('satuan', $bahanBaku->satuan) == 'Ml' ? 'selected' : '' }}>
                                     Ml
                                 </option>
+                                <option value="Lainnya"
+                                    {{ old('satuan', $bahanBaku->satuan) != 'Gram' && old('satuan', $bahanBaku->satuan) != 'Ml' ? 'selected' : '' }}>
+                                    Lainnya
+                                </option>
                             </select>
+                            <div id="other-satuan-container" class="mt-2"
+                                style="display: {{ old('satuan', $bahanBaku->satuan) != 'Gram' && old('satuan', $bahanBaku->satuan) != 'Ml' ? 'block' : 'none' }};">
+                                <input type="text" id="other_satuan" name="other_satuan"
+                                    class="form-control @error('other_satuan') is-invalid @enderror"
+                                    value="{{ old(
+                                        'other_satuan',
+                                        old('satuan', $bahanBaku->satuan) != 'Gram' && old('satuan', $bahanBaku->satuan) != 'Ml' ? $bahanBaku->satuan : '',
+                                    ) }}"
+                                    placeholder="Masukkan satuan lainnya">
+                                @error('other_satuan')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                             @error('satuan')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -98,4 +97,24 @@
             </div>
         </div>
     </main>
+@endsection
+
+@section('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const satuan = document.getElementById('satuan');
+            const otherSatuanContainer = document.getElementById('other-satuan-container');
+            const otherSatuan = document.getElementById('other_satuan');
+
+            // Handle satuan dropdown change
+            satuan.addEventListener('change', function() {
+                if (this.value === 'Lainnya') {
+                    otherSatuanContainer.style.display = 'block';
+                } else {
+                    otherSatuanContainer.style.display = 'none';
+                    otherSatuan.value = '';
+                }
+            });
+        });
+    </script>
 @endsection

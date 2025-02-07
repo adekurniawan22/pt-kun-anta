@@ -72,7 +72,20 @@
                                 <option value="Ml" {{ old('satuan') == 'Ml' ? 'selected' : '' }}>
                                     Ml
                                 </option>
+                                <option value="Lainnya" {{ old('satuan') == 'Lainnya' ? 'selected' : '' }}>
+                                    Lainnya
+                                </option>
                             </select>
+                            <div id="other-satuan-container" class="mt-2" style="display: none;">
+                                <input type="text" id="other_satuan" name="other_satuan"
+                                    class="form-control @error('other_satuan') is-invalid @enderror"
+                                    value="{{ old('other_satuan') }}" placeholder="Masukkan satuan lainnya">
+                                @error('other_satuan')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                             @error('satuan')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -110,6 +123,9 @@
             const kodeBahanBaku = document.getElementById('kode_bahan_baku');
             const namaBahanBaku = document.getElementById('nama_bahan_baku');
             const autoGenerate = document.getElementById('auto_generate');
+            const satuan = document.getElementById('satuan');
+            const otherSatuanContainer = document.getElementById('other-satuan-container');
+            const otherSatuan = document.getElementById('other_satuan');
             const lastId = {{ $lastId }};
 
             function generateKode(nama) {
@@ -150,6 +166,24 @@
                     kodeBahanBaku.value = generateKode(namaBahanBaku.value);
                 }
             });
+
+            // Handle satuan dropdown change
+            satuan.addEventListener('change', function() {
+                if (this.value === 'Lainnya') {
+                    otherSatuanContainer.style.display = 'block';
+                    // otherSatuan.required = true;
+                } else {
+                    otherSatuanContainer.style.display = 'none';
+                    // otherSatuan.required = false;
+                    otherSatuan.value = '';
+                }
+            });
+
+            // Set initial state based on old input
+            if (satuan.value === 'Lainnya') {
+                otherSatuanContainer.style.display = 'block';
+                // otherSatuan.required = true;
+            }
         });
     </script>
 @endsection

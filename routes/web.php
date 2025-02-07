@@ -90,9 +90,9 @@ Route::middleware(['auth.custom'])->group(function () {
         Route::get('admin/bahan-baku/transaksi', [BahanBakuTransaksiController::class, 'index'])->name('admin.transaksi.index');
         Route::get('admin/bahan-baku/transaksi/create', [BahanBakuTransaksiController::class, 'create'])->name('admin.transaksi.create');
         Route::post('admin/bahan-baku/transaksi', [BahanBakuTransaksiController::class, 'store'])->name('admin.transaksi.store');
-        Route::get('admin/bahan-baku/transaksi/{id}/edit', [BahanBakuTransaksiController::class, 'edit'])->name('admin.transaksi.edit');
-        Route::put('admin/bahan-baku/transaksi/{id}', [BahanBakuTransaksiController::class, 'update'])->name('admin.transaksi.update');
-        Route::delete('admin/bahan-baku/transaksi/{id}', [BahanBakuTransaksiController::class, 'destroy'])->name('admin.transaksi.destroy');
+        Route::get('admin/bahan-baku/transaksi/{tipe}/{id}/edit', [BahanBakuTransaksiController::class, 'edit'])->name('admin.transaksi.edit');
+        Route::put('admin/bahan-baku/transaksi/{tipe}/{id}', [BahanBakuTransaksiController::class, 'update'])->name('admin.transaksi.update');
+        Route::delete('admin/bahan-baku/transaksi/{tipe}/{id}', [BahanBakuTransaksiController::class, 'destroy'])->name('admin.transaksi.destroy');
 
         // Peramalan
         Route::get('admin/bahan-baku/peramalan', [PeramalanController::class, 'index'])->name('admin.peramalan.index');
