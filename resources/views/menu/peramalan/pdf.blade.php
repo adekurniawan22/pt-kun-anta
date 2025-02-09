@@ -74,8 +74,6 @@
                 <tr>
                     <th style="text-align: center">No.</th>
                     <th>Bahan Baku</th>
-                    <th>Standarisasi</th>
-                    <th>Stok Saat Ini</th>
                     <th>Prediksi Pembelian</th>
                     <th>Informasi Pembelian Terakhir</th>
                     <th>Total Prediksi</th>
@@ -104,22 +102,7 @@
                             <br>
                             <small class="text-muted">{{ $data['kode_bahan_baku'] ?? 'Tidak ada kode' }}</small>
                         </td>
-                        <td>
-                            @if (isset($data['stok_minimal']))
-                                {{ number_format($data['stok_minimal'], 0, ',', '.') }}
-                                <small>{{ $data['satuan'] ?? '-' }}</small>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if (isset($data['stok_saat_ini']))
-                                {{ number_format($data['stok_saat_ini'], 0, ',', '.') }}
-                                <small>{{ $data['satuan'] ?? '-' }}</small>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
+
                         <td>
                             @if (isset($data['prediksi_bulan_selanjutnya']['jumlah_keluar']))
                                 {{ number_format($data['prediksi_bulan_selanjutnya']['jumlah_keluar'], 0, ',', '.') }}
@@ -148,7 +131,7 @@
                     </tr>
                 @endforeach
                 <tr style="background-color:#f2f2f2">
-                    <td colspan="6" class="fw-bold" style="text-align: right">
+                    <td colspan="4" class="fw-bold" style="text-align: right">
                         Total Biaya:
                     </td>
                     <td class="fw-bold">Rp {{ number_format($total_biaya, 0, ',', '.') }}</td>
