@@ -76,7 +76,7 @@
                     <th>Bahan Baku</th>
                     <th>Prediksi Pembelian</th>
                     <th>Informasi Pembelian Terakhir</th>
-                    <th>Total Prediksi</th>
+                    <th>Total Harga Prediksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -132,7 +132,7 @@
                 @endforeach
                 <tr style="background-color:#f2f2f2">
                     <td colspan="4" class="fw-bold" style="text-align: right">
-                        Total Biaya:
+                        Total Seluruh Harga:
                     </td>
                     <td class="fw-bold">Rp {{ number_format($total_biaya, 0, ',', '.') }}</td>
                 </tr>
