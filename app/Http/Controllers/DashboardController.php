@@ -12,45 +12,75 @@ class DashboardController extends Controller
 {
     public function manajer_produksi()
     {
+        // Get top materials with their suppliers and total value
         $topBahanBaku = TransaksiMasuk::query()
             ->select(
                 'bahan_baku_id',
                 DB::raw('count(*) as total_pembelian'),
-                DB::raw('GROUP_CONCAT(DISTINCT supplier_id) as supplier_ids')
+                DB::raw('GROUP_CONCAT(DISTINCT supplier_id) as supplier_ids'),
+                DB::raw('SUM(jumlah * harga_per_satuan) as total_nilai_pembelian')
             )
             ->with([
                 'bahanBaku:bahan_baku_id,nama_bahan_baku',
                 'supplier:supplier_id,nama_supplier'
             ])
+            ->whereNotNull('harga_per_satuan')
             ->groupBy('bahan_baku_id')
-            ->orderBy('total_pembelian', 'desc')
+            ->orderBy('total_nilai_pembelian', 'desc')
             ->take(5)
             ->get();
 
+        // Get top suppliers with transaction count and total value
         $topSupplier = TransaksiMasuk::query()
-            ->select('supplier_id', DB::raw('count(*) as total_transaksi'))
+            ->select(
+                'supplier_id',
+                DB::raw('count(*) as total_transaksi'),
+                DB::raw('SUM(jumlah * harga_per_satuan) as total_nilai_transaksi')
+            )
             ->whereNotNull('supplier_id')
+            ->whereNotNull('harga_per_satuan')
             ->with('supplier:supplier_id,nama_supplier')
             ->groupBy('supplier_id')
-            ->orderBy('total_transaksi', 'desc')
+            ->orderBy('total_nilai_transaksi', 'desc')
             ->take(5)
             ->get();
 
+        // Get all materials
         $bahanBaku = BahanBaku::all();
 
-        $currentStocks = DB::table('transaksi_masuk')
-            ->selectRaw('bahan_baku_id, COALESCE(SUM(jumlah), 0) as total_stok')
+        // Calculate current stock considering both incoming and outgoing transactions
+        $currentStocks = DB::query()
+            ->fromSub(function ($query) {
+                $query->from('transaksi_masuk')
+                    ->select('bahan_baku_id')
+                    ->selectRaw('COALESCE(SUM(jumlah), 0) as total_masuk')
+                    ->groupBy('bahan_baku_id')
+                    ->union(
+                        DB::table('transaksi_keluar')
+                            ->select('bahan_baku_id')
+                            ->selectRaw('COALESCE(SUM(jumlah), 0) as total_masuk')
+                            ->groupBy('bahan_baku_id')
+                    );
+            }, 'combined_transactions')
+            ->select('bahan_baku_id')
+            ->selectRaw('SUM(CASE 
+            WHEN total_masuk IS NOT NULL THEN total_masuk 
+            ELSE -total_masuk 
+        END) as total_stok')
             ->groupBy('bahan_baku_id')
             ->get()
             ->keyBy('bahan_baku_id');
 
+        // Process materials with their current stock status
         $bahanBakuFiltered = $bahanBaku->map(function ($item) use ($currentStocks) {
-            $currentStock = $currentStocks->get($item->bahan_baku_id)?->total_stok ?? 0;
+            $stockRecord = $currentStocks->get($item->bahan_baku_id);
+            $currentStock = $stockRecord ? $stockRecord->total_stok : 0;
 
+            // Calculate stock status
             $statusStok = 'Stok Aman';
             if ($currentStock <= $item->stok_minimal) {
                 $statusStok = 'Stok Rendah';
-            } elseif ($currentStock <= $item->stok_minimal * 0.3 + $item->stok_minimal) {
+            } elseif ($currentStock <= ($item->stok_minimal * 1.3)) {
                 $statusStok = 'Stok Kritis';
             }
 
@@ -63,6 +93,7 @@ class DashboardController extends Controller
             ];
         });
 
+        // Filter materials by stock status
         $stokRendah = $bahanBakuFiltered->filter(function ($item) {
             return $item['status_stok'] === 'Stok Rendah';
         });
@@ -71,18 +102,16 @@ class DashboardController extends Controller
             return $item['status_stok'] === 'Stok Kritis';
         });
 
+        // Get current month's transaction counts
+        $currentMonth = Carbon::now();
+        $transactionCounts = $this->getMonthlyTransactionCounts($currentMonth);
+
         return view('menu.dashboard.manajer_produksi', [
             'title' => 'Dashboard Manajer Produksi',
             'jumlahSupplier' => Supplier::count(),
             'jumlahBahanBaku' => BahanBaku::count(),
-            'jumlahTransaksiMasukBulanIni' => TransaksiMasuk::query()
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
-            'jumlahTransaksiKeluarBulanIni' => TransaksiKeluar::query()
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
+            'jumlahTransaksiMasukBulanIni' => $transactionCounts['masuk'],
+            'jumlahTransaksiKeluarBulanIni' => $transactionCounts['keluar'],
             'topBahanBaku' => $topBahanBaku,
             'topSupplier' => $topSupplier,
             'stokRendah' => $stokRendah,
@@ -92,60 +121,84 @@ class DashboardController extends Controller
 
     public function supervisor()
     {
+        // Get current month's transaction statistics
+        $currentMonth = Carbon::now();
+        $currentMonth = Carbon::now();
+        $transactionCounts = $this->getMonthlyTransactionCounts($currentMonth);
+
         return view('menu.dashboard.supervisor', [
             'title' => 'Dashboard Supervisor',
-            'jumlahTransaksiMasukBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'masuk')
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
-            'jumlahTransaksiKeluarBulanIni' => BahanBakuTransaksi::where('tipe', '=', 'keluar')
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
+            'jumlahTransaksiMasukBulanIni' => $transactionCounts['masuk'],
+            'jumlahTransaksiKeluarBulanIni' => $transactionCounts['keluar'],
         ]);
     }
 
     public function admin()
     {
+        // Get top materials with their suppliers
         $topBahanBaku = TransaksiMasuk::query()
             ->select(
                 'bahan_baku_id',
                 DB::raw('count(*) as total_pembelian'),
-                DB::raw('GROUP_CONCAT(DISTINCT supplier_id) as supplier_ids')
+                DB::raw('GROUP_CONCAT(DISTINCT supplier_id) as supplier_ids'),
+                DB::raw('SUM(jumlah * harga_per_satuan) as total_nilai_pembelian')
             )
             ->with([
                 'bahanBaku:bahan_baku_id,nama_bahan_baku',
                 'supplier:supplier_id,nama_supplier'
             ])
+            ->whereNotNull('harga_per_satuan')
             ->groupBy('bahan_baku_id')
-            ->orderBy('total_pembelian', 'desc')
+            ->orderBy('total_nilai_pembelian', 'desc')
             ->take(5)
             ->get();
 
+        // Get top suppliers with transaction count and total value
         $topSupplier = TransaksiMasuk::query()
-            ->select('supplier_id', DB::raw('count(*) as total_transaksi'))
+            ->select(
+                'supplier_id',
+                DB::raw('count(*) as total_transaksi'),
+                DB::raw('SUM(jumlah * harga_per_satuan) as total_nilai_transaksi')
+            )
             ->whereNotNull('supplier_id')
+            ->whereNotNull('harga_per_satuan')
             ->with('supplier:supplier_id,nama_supplier')
             ->groupBy('supplier_id')
-            ->orderBy('total_transaksi', 'desc')
+            ->orderBy('total_nilai_transaksi', 'desc')
             ->take(5)
             ->get();
 
+        // Get all materials
         $bahanBaku = BahanBaku::all();
 
-        $currentStocks = DB::table('transaksi_masuk')
-            ->selectRaw('bahan_baku_id, COALESCE(SUM(jumlah), 0) as total_stok')
+        // Calculate stocks more accurately
+        $stokMasuk = DB::table('transaksi_masuk')
+            ->select('bahan_baku_id')
+            ->selectRaw('COALESCE(SUM(jumlah), 0) as total_masuk')
             ->groupBy('bahan_baku_id')
             ->get()
             ->keyBy('bahan_baku_id');
 
-        $bahanBakuFiltered = $bahanBaku->map(function ($item) use ($currentStocks) {
-            $currentStock = $currentStocks->get($item->bahan_baku_id)?->total_stok ?? 0;
+        $stokKeluar = DB::table('transaksi_keluar')
+            ->select('bahan_baku_id')
+            ->selectRaw('COALESCE(SUM(jumlah), 0) as total_keluar')
+            ->groupBy('bahan_baku_id')
+            ->get()
+            ->keyBy('bahan_baku_id');
 
+        // Process materials with their current stock status
+        $bahanBakuFiltered = $bahanBaku->map(function ($item) use ($stokMasuk, $stokKeluar) {
+            $totalMasuk = $stokMasuk->get($item->bahan_baku_id);
+            $totalKeluar = $stokKeluar->get($item->bahan_baku_id);
+
+            $currentStock = ($totalMasuk ? $totalMasuk->total_masuk : 0) -
+                ($totalKeluar ? $totalKeluar->total_keluar : 0);
+
+            // Calculate stock status
             $statusStok = 'Stok Aman';
             if ($currentStock <= $item->stok_minimal) {
                 $statusStok = 'Stok Rendah';
-            } elseif ($currentStock <= $item->stok_minimal * 0.3 + $item->stok_minimal) {
+            } elseif ($currentStock <= ($item->stok_minimal * 1.3)) {
                 $statusStok = 'Stok Kritis';
             }
 
@@ -158,6 +211,7 @@ class DashboardController extends Controller
             ];
         });
 
+        // Filter materials by stock status using traditional function syntax
         $stokRendah = $bahanBakuFiltered->filter(function ($item) {
             return $item['status_stok'] === 'Stok Rendah';
         });
@@ -166,19 +220,17 @@ class DashboardController extends Controller
             return $item['status_stok'] === 'Stok Kritis';
         });
 
+        // Get current month's transaction counts
+        $currentMonth = Carbon::now();
+        $transactionCounts = $this->getMonthlyTransactionCounts($currentMonth);
+
         return view('menu.dashboard.admin', [
             'title' => 'Dashboard Admin',
             'jumlahPengguna' => Pengguna::count(),
             'jumlahSupplier' => Supplier::count(),
             'jumlahBahanBaku' => BahanBaku::count(),
-            'jumlahTransaksiMasukBulanIni' => TransaksiMasuk::query()
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
-            'jumlahTransaksiKeluarBulanIni' => TransaksiMasuk::query()
-                ->whereMonth('tanggal_transaksi', Carbon::now()->month)
-                ->whereYear('tanggal_transaksi', Carbon::now()->year)
-                ->count(),
+            'jumlahTransaksiMasukBulanIni' => $transactionCounts['masuk'],
+            'jumlahTransaksiKeluarBulanIni' => $transactionCounts['keluar'],
             'topBahanBaku' => $topBahanBaku,
             'topSupplier' => $topSupplier,
             'stokRendah' => $stokRendah,
@@ -186,18 +238,17 @@ class DashboardController extends Controller
         ]);
     }
 
-    private $indonesianMonths = [
-        1 => 'Januari',
-        2 => 'Februari',
-        3 => 'Maret',
-        4 => 'April',
-        5 => 'Mei',
-        6 => 'Juni',
-        7 => 'Juli',
-        8 => 'Agustus',
-        9 => 'September',
-        10 => 'Oktober',
-        11 => 'November',
-        12 => 'Desember'
-    ];
+    private function getMonthlyTransactionCounts(Carbon $date)
+    {
+        return [
+            'masuk' => TransaksiMasuk::query()
+                ->whereMonth('tanggal_transaksi', $date->month)
+                ->whereYear('tanggal_transaksi', $date->year)
+                ->count(),
+            'keluar' => TransaksiKeluar::query()
+                ->whereMonth('tanggal_transaksi', $date->month)
+                ->whereYear('tanggal_transaksi', $date->year)
+                ->count(),
+        ];
+    }
 }

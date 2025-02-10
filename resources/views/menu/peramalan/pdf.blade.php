@@ -59,6 +59,10 @@
         small {
             font-size: 85%;
         }
+
+        .signature {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -106,30 +110,42 @@
                         <td>
                             @if (isset($data['prediksi_bulan_selanjutnya']['jumlah_keluar']))
                                 {{ number_format($data['prediksi_bulan_selanjutnya']['jumlah_keluar'], 0, ',', '.') }}
-                                <small>{{ $data['satuan'] ?? '-' }}</small>
+                                {{ $data['satuan'] ?? '-' }}
+                                @if ($data['satuan'] == 'Liter' && $data['prediksi_bulan_selanjutnya']['jumlah_keluar'] > 0)
+                                    @php
+                                        $jumlah_liter = $data['prediksi_bulan_selanjutnya']['jumlah_keluar'];
+                                        $jumlah_galon = ceil($jumlah_liter / 19);
+                                    @endphp
+                                    <small><em>({{ $jumlah_galon }} Galon)</em></small>
+                                @endif
                             @else
-                                <span class="text-muted">Tidak ada prediksi</span>
+                                <span class="text-muted">Prediksi tidak tersedia</span>
                             @endif
                         </td>
                         <td>
-                            @if (isset($data['supplier_terakhir']['harga_per_satuan']) && isset($data['supplier_terakhir']['nama_supplier']))
+                            @if (isset($data['supplier_terakhir']['harga_per_satuan']) &&
+                                    isset($data['supplier_terakhir']['nama_supplier']) &&
+                                    $data['prediksi_bulan_selanjutnya']['jumlah_keluar'] > 0)
                                 Harga per {{ $data['satuan'] ?? '-' }} : <strong>Rp
                                     {{ number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') }}</strong>
                                 <br>
                                 Supplier : <strong>{{ $data['supplier_terakhir']['nama_supplier'] }}</strong>
+                            @elseif($data['prediksi_bulan_selanjutnya']['jumlah_keluar'] == 0)
+                                <span class="text-muted">Tidak tersedia karena jumlah prediksi 0</span>
                             @else
-                                <span class="text-muted">Belum ada info tersedia</span>
+                                <span class="text-muted">Informasi belum tersedia</span>
                             @endif
                         </td>
                         <td>
                             @if ($biaya > 0)
                                 Rp {{ number_format($biaya, 0, ',', '.') }}
                             @else
-                                <span class="text-muted">Harga belum tersedia</span>
+                                <span class="text-muted">Informasi biaya belum tersedia</span>
                             @endif
                         </td>
                     </tr>
                 @endforeach
+
                 <tr style="background-color:#f2f2f2">
                     <td colspan="4" class="fw-bold" style="text-align: right">
                         Total Seluruh Harga:
@@ -138,6 +154,29 @@
                 </tr>
             </tbody>
         </table>
+
+        @php
+            $bulan_indonesia = [
+                'Januari',
+                'Februari',
+                'Maret',
+                'April',
+                'Mei',
+                'Juni',
+                'Juli',
+                'Agustus',
+                'September',
+                'Oktober',
+                'November',
+                'Desember',
+            ];
+            $tanggal = date('d') . ' ' . $bulan_indonesia[date('n') - 1] . ' ' . date('Y');
+        @endphp
+
+        <div class="signature" style="margin-top: 80px">
+            <p>{{ $tanggal }}</p>
+            <p>Dibuat oleh {{ $nama_pembuat ?? '-' }}</p>
+        </div>
     @else
         <div class="no-data">
             <p>Tidak ada data bahan baku yang tersedia</p>
