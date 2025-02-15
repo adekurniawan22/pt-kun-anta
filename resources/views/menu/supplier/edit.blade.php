@@ -108,7 +108,7 @@
                     width: "100%",
                     placeholder: 'Pilih bahan baku',
                     allowClear: true,
-                    maximumSelectionLength: 5,
+                    maximumSelectionLength: 20,
                     language: {
                         noResults: function() {
                             return "Tidak ada data yang dicari";
