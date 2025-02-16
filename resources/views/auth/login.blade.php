@@ -30,7 +30,7 @@
             <div class="authentication-card pt-0 w-100">
                 <div class="container-fluid">
 
-                    {{-- <div class="col-12 mb-3">
+                    <div class="col-12 mb-3">
                         <div class="ms-auto position-relative">
                             <div class="position-absolute top-50 translate-middle-y search-icon px-3">
                                 <i class="bi bi-person-fill"></i>
@@ -42,7 +42,7 @@
                                 <option value="supervisor@example.com">Supervisor</option>
                             </select>
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="row g-0">

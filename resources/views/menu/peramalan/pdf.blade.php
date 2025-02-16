@@ -309,7 +309,7 @@
                 'nama_bahan_baku' => 'Ginger Oil',
                 'satuan' => 'Ml',
                 'pcs' => 'Botol',
-                'satuanPerPcs' => '1000 ml',
+                'satuanPerPcs' => 1000,
                 'harga' => 1570000,
             ],
             [

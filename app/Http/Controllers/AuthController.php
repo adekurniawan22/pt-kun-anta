@@ -44,11 +44,15 @@ class AuthController extends Controller
                 ->with('error', 'Akun anda tidak ditemukan');
         }
 
-        if (!Hash::check($request->password, $user->password)) {
+        $checkPassword = Hash::check($request->password, $user->password);
+
+        if ($checkPassword) {
+        } else {
             return redirect()->back()
-                ->withInput($request->only('email', 'password'))
                 ->with('error', 'Password anda salah');
         }
+
+        // dd('HAHAHAHA');
 
         // Set session untuk pengguna dan role
         Session::put('pengguna_id', $user->pengguna_id);
