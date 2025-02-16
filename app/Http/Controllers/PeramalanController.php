@@ -32,10 +32,14 @@ class PeramalanController extends Controller
         $bahan_baku = BahanBaku::getAllDetailedStock(3, $date_prediksi);
         $bahan_baku = $bahan_baku->sortBy('stok_saat_ini');
 
+        $bahanBakuFiltered = $bahan_baku->filter(function ($item) {
+            return $item['stok_minimal'] >= $item['stok_saat_ini'];
+        });
+
         $nama_pembuat = Pengguna::find(session()->get('pengguna_id'));
 
         $pdf = PDF::loadView('menu.peramalan.pdf', [
-            'bahan_baku' => $bahan_baku,
+            'bahan_baku' => $bahanBakuFiltered,
             'title' => 'PERMALAN BAHAN BAKU',
             'bulan_prediksi' => $date_prediksi->locale('id')->monthName . ' ' . $date_prediksi->year,
             'nama_pembuat' => $nama_pembuat->nama,

@@ -343,8 +343,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($bahan_baku as $data)
-                                    <tr
-                                        class="{{ number_format($data['stok_saat_ini'], 0, ',', '.') < number_format($data['stok_minimal'], 0, ',', '.') ? 'table-danger' : '' }}">
+                                    <tr class="{{ $data['stok_saat_ini'] < $data['stok_minimal'] ? 'table-danger' : '' }}">
                                         <td>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0">{{ $data['nama_bahan_baku'] }}</h6>

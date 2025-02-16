@@ -153,7 +153,7 @@ class BahanBaku extends Model
             $averageKeluar = $lastThreeMonths->count() > 0 ? $totalKeluar / $lastThreeMonths->count() : 0;
             $averageMasuk = $lastThreeMonths->count() > 0 ? $totalMasuk / $lastThreeMonths->count() : 0;
 
-            $currentStock = $currentStocks->get($item->bahan_baku_id)->total_stok ?? 0;
+            $currentStock = intval($currentStocks->get($item->bahan_baku_id)->total_stok ?? 0);
 
             if ($currentStock < $item->stok_minimal) {
                 $prediksiKeluar = round($averageKeluar - $currentStock + $item->stok_minimal);

@@ -406,6 +406,10 @@
                             </span>
                             <br>
                             <small class="text-muted">{{ $data['kode_bahan_baku'] ?? 'Tidak ada kode' }}</small>
+                            <br>
+                            Stok minimal : {{ $data['stok_minimal'] }}
+                            <br>
+                            Stok saat ini : {{ $data['stok_saat_ini'] }}
                         </td>
 
                         <td>
