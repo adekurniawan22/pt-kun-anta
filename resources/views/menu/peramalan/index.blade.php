@@ -409,8 +409,20 @@
                                             <strong>Supplier terakhir:</strong>
                                             {{ $data['supplier_terakhir']['nama_supplier'] ?? 'Belum ada' }}<br>
 
-                                            <strong>Harga per {{ $data['satuan'] ?? '-' }} terakhir:</strong>
-                                            {{ isset($data['supplier_terakhir']['harga_per_satuan']) && is_numeric($data['supplier_terakhir']['harga_per_satuan']) ? 'Rp. ' . number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') : 'Belum ada' }}
+                                            @if ($matchingBahanBaku && $data['prediksi_bulan_selanjutnya']['jumlah_keluar'] > 0)
+                                                <strong>Harga per {{ $matchingBahanBaku['pcs'] ?? '-' }}:</strong>
+                                                {{ number_format($matchingBahanBaku['harga'], 0, ',', '.') }}
+                                                <small>
+                                                    (
+                                                    <em>
+                                                        menurut aturan bahan baku
+                                                    </em>
+                                                    )
+                                                </small>
+                                            @else
+                                                <strong>Harga per {{ $data['satuan'] ?? '-' }} terakhir:</strong>
+                                                {{ isset($data['supplier_terakhir']['harga_per_satuan']) && is_numeric($data['supplier_terakhir']['harga_per_satuan']) ? 'Rp. ' . number_format($data['supplier_terakhir']['harga_per_satuan'], 0, ',', '.') : 'Belum ada' }}
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
