@@ -30,19 +30,22 @@
             <div class="authentication-card pt-0 w-100">
                 <div class="container-fluid">
 
-                    <div class="col-12 mb-3">
-                        <div class="ms-auto position-relative">
-                            <div class="position-absolute top-50 translate-middle-y search-icon px-3">
-                                <i class="bi bi-person-fill"></i>
+                
+                    <!-- Tidak Aktif -->
+                        <!-- <div class="col-12 mb-3">
+                            <div class="ms-auto position-relative">
+                                <div class="position-absolute top-50 translate-middle-y search-icon px-3">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <select class="form-select radius-30 ps-5" id="userSelect" name="email">
+                                    <option value="">Pilih user</option>
+                                    <option value="admin@example.com">Admin</option>
+                                    <option value="manajer@example.com">Manajer Produksi</option>
+                                    <option value="supervisor@example.com">Supervisor</option>
+                                </select>
                             </div>
-                            <select class="form-select radius-30 ps-5" id="userSelect" name="email">
-                                <option value="">Pilih user</option>
-                                <option value="admin@example.com">Admin</option>
-                                <option value="manajer@example.com">Manajer Produksi</option>
-                                <option value="supervisor@example.com">Supervisor</option>
-                            </select>
-                        </div>
-                    </div>
+                        </div> -->
+                    <!-- Tidak Aktif -->
 
                     <div class="card shadow rounded-4 overflow-hidden">
                         <div class="row g-0">
@@ -135,23 +138,27 @@
     <script src="<?= url('assets/onedash') ?>/plugins/notifications/js/notification-custom-script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var userSelect = document.getElementById('userSelect');
-            userSelect.addEventListener('change', function() {
-                var emailInput = document.getElementById('email');
-                var passwordInput = document.getElementById('password');
 
-                if (this.value === "") {
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                } else {
-                    emailInput.value = this.value;
-                    passwordInput.value = 'password';
-                }
+            //Tidak Aktif
+            // var userSelect = document.getElementById('userSelect');
+            // userSelect.addEventListener('change', function() {
+            //     var emailInput = document.getElementById('email');
+            //     var passwordInput = document.getElementById('password');
 
-                if (this.value !== '') {
-                    this.form.submit();
-                }
-            });
+            //     if (this.value === "") {
+            //         emailInput.value = '';
+            //         passwordInput.value = '';
+            //     } else {
+            //         emailInput.value = this.value;
+            //         passwordInput.value = 'password';
+            //     }
+
+            //     if (this.value !== '') {
+            //         this.form.submit();
+            //     }
+            // });
+            //Tidak Aktif
+
             // Notification Success
             @if (session()->has('success'))
                 function notifSuccess() {
