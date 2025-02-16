@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class BahanBakuTransaksiController extends Controller
 {
-    private const TITLE_INDEX = 'Daftar Transaksi Bahan Baku';
-    private const TITLE_CREATE = 'Tambah Transaksi Bahan Baku';
-    private const TITLE_EDIT = 'Edit Transaksi Bahan Baku';
+    private const TITLE_INDEX = 'Daftar Penggunaan Bahan Baku';
+    private const TITLE_CREATE = 'Tambah Penggunaan Bahan Baku';
+    private const TITLE_EDIT = 'Edit Penggunaan Bahan Baku';
 
     public function index()
     {

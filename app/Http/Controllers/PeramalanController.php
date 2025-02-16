@@ -9,7 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PeramalanController extends Controller
 {
-    private const TITLE_INDEX = 'Peramalan Bahan Baku';
+    private const TITLE_INDEX = 'Penentuan Pembelian';
 
     public function index(Request $request)
     {

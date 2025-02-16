@@ -45,7 +45,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Transaksi Masuk Bulan Ini</p>
+                                <p class="mb-0 text-dark">Penggunaan Bahan Baku Masuk Bulan Ini</p>
                                 <h4 class="my-1 text-dark">{{ $jumlahTransaksiMasukBulanIni }}</h4>
                             </div>
                             <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-down-circle"></i>
@@ -59,7 +59,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div>
-                                <p class="mb-0 text-dark">Jumlah Transaksi Keluar Bulan Ini</p>
+                                <p class="mb-0 text-dark">Penggunaan Bahan Baku Keluar Bulan Ini</p>
                                 <h4 class="my-1 text-dark">{{ $jumlahTransaksiKeluarBulanIni }}</h4>
                             </div>
                             <div class="text-dark ms-auto font-35"><i class="bi bi-arrow-up-circle"></i>

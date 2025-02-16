@@ -17,11 +17,15 @@
                     </ol>
                 </nav>
             </div>
-            <div class="ms-auto">
-                <a href="{{ route(session()->get('role') . '.bahan_baku.create') }}" class="btn btn-success">
-                    <i class="fadeIn animated bx bx-plus"></i>Tambah
-                </a>
-            </div>
+
+            @if (session('role') != 'supervisor')
+                <div class="ms-auto">
+                    <a href="{{ route(session('role') . '.bahan_baku.create') }}" class="btn btn-success">
+                        <i class="fadeIn animated bx bx-plus"></i>Tambah
+                    </a>
+                </div>
+            @endif
+
         </div>
         <!-- End Breadcrumb -->
 
@@ -34,14 +38,17 @@
                                 <tr>
                                     <th>Bahan Baku</th>
                                     <th>Standarisasi</th>
-                                    <th>Stok Saat Ini</th>
-                                    <th>Dibuat oleh</th>
-                                    <th data-sortable="false">Aksi</th>
+                                    {{-- <th>Stok Saat Ini</th> --}}
+                                    @if (session('role') != 'supervisor')
+                                        <th>Dibuat oleh</th>
+                                        <th data-sortable="false">Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($bahan_baku as $data)
-                                    <tr class="{{ $data->stok < $data->stok_minimal ? 'table-danger' : '' }}">
+                                    {{-- <tr class="{{ $data->stok < $data->stok_minimal ? 'table-danger' : '' }}"> --}}
+                                    <tr>
                                         <td>
                                             <div class="d-flex">
                                                 <div class="d-flex flex-column justify-content-center">
@@ -56,46 +63,49 @@
                                             {{ number_format($data->stok_minimal, 0, ',', '.') }}
                                             {{ $data->satuan }}
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             {{ number_format($data->stok, 0, ',', '.') }}
                                             {{ $data->satuan }}
-                                        </td>
-                                        <td>
-                                            {{ $data->pengguna->nama }}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-start justify-content-start gap-3 fs-6">
-                                                <!-- Tombol Histori -->
-                                                <button type="button"
-                                                    class="btn btn-sm btn-info text-white d-flex align-items-center"
-                                                    data-bs-toggle="modal" data-bs-target="#historiModal"
-                                                    data-bahan-baku-id="{{ $data->bahan_baku_id }}">
-                                                    <i class="bi bi-bar-chart me-1"></i> Histori
-                                                </button>
+                                        </td> --}}
 
-                                                <!-- Tombol Edit -->
-                                                <a href="{{ route(session()->get('role') . '.bahan_baku.edit', $data->bahan_baku_id) }}"
-                                                    class="btn btn-sm btn-warning text-white d-flex align-items-center">
-                                                    <i class="bi bi-pencil-fill me-1"></i> Edit
-                                                </a>
+                                        @if (session('role') != 'supervisor')
+                                            <td>
+                                                {{ $data->pengguna->nama }}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-start justify-content-start gap-3 fs-6">
+                                                    <!-- Tombol Histori -->
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-info text-white d-flex align-items-center"
+                                                        data-bs-toggle="modal" data-bs-target="#historiModal"
+                                                        data-bahan-baku-id="{{ $data->bahan_baku_id }}">
+                                                        <i class="bi bi-bar-chart me-1"></i> Histori
+                                                    </button>
 
-                                                <!-- Tombol Hapus -->
-                                                <button type="button"
-                                                    class="btn btn-sm btn-danger d-flex align-items-center"
-                                                    data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
-                                                    data-form-id="delete-form-{{ $data->bahan_baku_id }}">
-                                                    <i class="bi bi-trash-fill me-1"></i> Hapus
-                                                </button>
+                                                    <!-- Tombol Edit -->
+                                                    <a href="{{ route(session()->get('role') . '.bahan_baku.edit', $data->bahan_baku_id) }}"
+                                                        class="btn btn-sm btn-warning text-white d-flex align-items-center">
+                                                        <i class="bi bi-pencil-fill me-1"></i> Edit
+                                                    </a>
 
-                                                <!-- Form Hapus -->
-                                                <form id="delete-form-{{ $data->bahan_baku_id }}"
-                                                    action="{{ route(session()->get('role') . '.bahan_baku.destroy', $data->bahan_baku_id) }}"
-                                                    method="POST" style="display: none;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </div>
-                                        </td>
+                                                    <!-- Tombol Hapus -->
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger d-flex align-items-center"
+                                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                                        data-form-id="delete-form-{{ $data->bahan_baku_id }}">
+                                                        <i class="bi bi-trash-fill me-1"></i> Hapus
+                                                    </button>
+
+                                                    <!-- Form Hapus -->
+                                                    <form id="delete-form-{{ $data->bahan_baku_id }}"
+                                                        action="{{ route(session()->get('role') . '.bahan_baku.destroy', $data->bahan_baku_id) }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                             </tbody>

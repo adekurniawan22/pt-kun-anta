@@ -48,13 +48,16 @@ Route::middleware(['auth.custom'])->group(function () {
         // Dashboard
         Route::get('supervisor/dashboard', [DashboardController::class, 'supervisor'])->name('supervisor.dashboard');
 
+        // BahanBaku
+        Route::get('supervisor/bahan-baku', [BahanBakuController::class, 'index'])->name('supervisor.bahan_baku.index');
+
         //Transaksi BahanBaku
         Route::get('supervisor/bahan-baku/transaksi', [BahanBakuTransaksiController::class, 'index'])->name('supervisor.transaksi.index');
         Route::get('supervisor/bahan-baku/transaksi/create', [BahanBakuTransaksiController::class, 'create'])->name('supervisor.transaksi.create');
         Route::post('supervisor/bahan-baku/transaksi', [BahanBakuTransaksiController::class, 'store'])->name('supervisor.transaksi.store');
-        Route::get('supervisor/bahan-baku/transaksi/{id}/edit', [BahanBakuTransaksiController::class, 'edit'])->name('supervisor.transaksi.edit');
-        Route::put('supervisor/bahan-baku/transaksi/{id}', [BahanBakuTransaksiController::class, 'update'])->name('supervisor.transaksi.update');
-        Route::delete('supervisor/bahan-baku/transaksi/{id}', [BahanBakuTransaksiController::class, 'destroy'])->name('supervisor.transaksi.destroy');
+        Route::get('supervisor/bahan-baku/transaksi/{tipe}/{id}/edit', [BahanBakuTransaksiController::class, 'edit'])->name('supervisor.transaksi.edit');
+        Route::put('supervisor/bahan-baku/transaksi/{tipe}/{id}', [BahanBakuTransaksiController::class, 'update'])->name('supervisor.transaksi.update');
+        Route::delete('supervisor/bahan-baku/transaksi/{tipe}/{id}', [BahanBakuTransaksiController::class, 'destroy'])->name('supervisor.transaksi.destroy');
     });
 
     Route::middleware(['role:admin'])->group(function () {

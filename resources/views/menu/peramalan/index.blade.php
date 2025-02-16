@@ -42,6 +42,291 @@
             }
         </style>
 
+        @php
+            $aturanBahanBaku = [
+                [
+                    'nama_bahan_baku' => 'Amidis',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Galon',
+                    'satuanPerPcs' => 19000,
+                    'harga' => 22000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Biotin',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 250,
+                    'harga' => 1663750,
+                ],
+                [
+                    'nama_bahan_baku' => 'Musk Fragrance',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 500,
+                    'harga' => 600000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Jojoba Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 2100000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Bakuchiol Ekstrak',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 4120000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Pewarna Hijau',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 10,
+                    'harga' => 5000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Charcoal',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 250,
+                    'harga' => 40000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Coconut Oil',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 18000,
+                    'harga' => 24000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Olive Oil',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 20000,
+                    'harga' => 57000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Castor Oil',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 60000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Glycerin',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 26000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Koh',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Karung',
+                    'satuanPerPcs' => 25000,
+                    'harga' => 30000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Natrosol',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 220000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Madu',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 7000,
+                    'harga' => 53500,
+                ],
+                [
+                    'nama_bahan_baku' => 'Shea Butter',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 215000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Calendula',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 500,
+                    'harga' => 1042000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Daun Bidara',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 55000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Daun The Hijau',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 64000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Alcohol',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 13000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Tea Tree Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1300000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Eucalyptus Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 716000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Blackseed Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 235000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Centela Asiatica',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 400680,
+                ],
+                [
+                    'nama_bahan_baku' => 'Spearmint',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1411000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Roman Chamomile',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1985500,
+                ],
+                [
+                    'nama_bahan_baku' => 'Lavender Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1358500,
+                ],
+                [
+                    'nama_bahan_baku' => 'Yuzu Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1915000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Licorice Ekstrak',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 888000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Vanila Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 2769000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Green Tea Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 2500000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Coco Glucoside',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 5000,
+                    'harga' => 77000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Decyl Glucoside',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Jerigen',
+                    'satuanPerPcs' => 5000,
+                    'harga' => 78000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Kukui Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => 250,
+                    'harga' => 25000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Ginger Oil',
+                    'satuan' => 'Ml',
+                    'pcs' => 'Botol',
+                    'satuanPerPcs' => '1000 ml',
+                    'harga' => 1570000,
+                ],
+                [
+                    'nama_bahan_baku' => 'SMCT',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 270000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Cocoyl Ishethionate',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 330000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Lauroyl Sarcosinate',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 170000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Wheat Protein',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 1200000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Coco Betain',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 1000,
+                    'harga' => 100000,
+                ],
+                [
+                    'nama_bahan_baku' => 'Citric Acid',
+                    'satuan' => 'Gram',
+                    'pcs' => 'Plastik',
+                    'satuanPerPcs' => 100,
+                    'harga' => 5000,
+                ],
+            ];
+        @endphp
+
         <div class="row ms-0 me-1">
             <div class="card radius-10 w-100">
                 <div class="card-body">
@@ -58,7 +343,8 @@
                             </thead>
                             <tbody>
                                 @foreach ($bahan_baku as $data)
-                                    <tr>
+                                    <tr
+                                        class="{{ number_format($data['stok_saat_ini'], 0, ',', '.') < number_format($data['stok_minimal'], 0, ',', '.') ? 'table-danger' : '' }}">
                                         <td>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h6 class="mb-0">{{ $data['nama_bahan_baku'] }}</h6>
@@ -89,7 +375,37 @@
                                             <strong>Bulan: </strong> {{ $data['prediksi_bulan_selanjutnya']['bulan'] }}<br>
                                             <strong>Prediksi pembelian: </strong>
                                             {{ number_format($data['prediksi_bulan_selanjutnya']['jumlah_keluar'], 0, ',', '.') }}
-                                            {{ $data['satuan'] }}<br>
+                                            {{ $data['satuan'] }}
+
+                                            {{-- Cari data bahan baku yang sesuai --}}
+                                            @php
+                                                $matchingBahanBaku = collect($aturanBahanBaku)->firstWhere(
+                                                    'nama_bahan_baku',
+                                                    $data['nama_bahan_baku'] ?? '',
+                                                );
+
+                                                $prediksi = floatval(
+                                                    $data['prediksi_bulan_selanjutnya']['jumlah_keluar'],
+                                                );
+                                            @endphp
+
+                                            {{-- Tampilkan informasi pembulatan jika ada data yang cocok dan prediksi > 0 --}}
+                                            @if ($matchingBahanBaku && $prediksi > 0 && is_numeric($matchingBahanBaku['satuanPerPcs']))
+                                                @php
+                                                    $satuanPerPcs = floatval($matchingBahanBaku['satuanPerPcs']);
+                                                    $jumlahPembulatan = ceil($prediksi / $satuanPerPcs);
+                                                @endphp
+                                                <small>
+                                                    (
+                                                    <em>
+                                                        {{ $jumlahPembulatan }}
+                                                        {{ $matchingBahanBaku['pcs'] }}
+                                                    </em>
+                                                    )
+                                                </small>
+                                            @endif
+
+                                            <br>
                                             <strong>Supplier terakhir:</strong>
                                             {{ $data['supplier_terakhir']['nama_supplier'] ?? 'Belum ada' }}<br>
 

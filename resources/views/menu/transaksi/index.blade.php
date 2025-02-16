@@ -128,7 +128,7 @@
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                         <!-- Tombol Edit -->
                                                         <li>
-                                                            <a href="{{ route('admin.transaksi.edit', ['tipe' => $history->tipe, 'id' => $bahan_baku_transaksi_id]) }}"
+                                                            <a href="{{ route(session()->get('role') . '.transaksi.edit', ['tipe' => $history->tipe, 'id' => $bahan_baku_transaksi_id]) }}"
                                                                 class="dropdown-item">
                                                                 <i class="bi bi-pencil-fill me-1"></i> Edit
                                                             </a>
