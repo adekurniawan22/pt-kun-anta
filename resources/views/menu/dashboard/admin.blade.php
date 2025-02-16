@@ -6,8 +6,8 @@
             <div>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 p-0">
-                        <li class="breadcrumb-item"><a href="{{ route(session()->get('role') . '.dashboard') }}"><i
-                                    class="bx bx-home-alt"></i></a>
+                        <li class="breadcrumb-item"><a href="{{ route(session()->get('role') . '.dashboard') }}">
+                                <i class="bx bx-home-alt"></i></a>
                         </li>
                         <li class="breadcrumb-item" aria-current="page">
                             <span class="text-dark">Dashboard</span>
@@ -132,8 +132,12 @@
                                     <small><strong>Total:</strong> {{ $item->total_pembelian }} kali pembelian</small>
                                     <br>
                                     <small><strong>Supplier:</strong>
-                                        @foreach (explode(',', $item->supplier_ids) as $supplierId)
-                                            {{ \App\Models\Supplier::find($supplierId)->nama_supplier }},
+                                        @php
+                                            $supplierIds = explode(',', $item->supplier_ids);
+                                            $lastKey = array_key_last($supplierIds);
+                                        @endphp
+                                        @foreach ($supplierIds as $key => $supplierId)
+                                            {{ \App\Models\Supplier::find($supplierId)->nama_supplier }}{{ $key !== $lastKey ? ',' : '' }}
                                         @endforeach
                                     </small>
                                 </li>

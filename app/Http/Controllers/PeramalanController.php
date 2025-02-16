@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{BahanBaku, BahanBakuTransaksi, Supplier};
+use App\Models\{BahanBaku, BahanBakuTransaksi, Pengguna, Supplier};
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -32,10 +32,13 @@ class PeramalanController extends Controller
         $bahan_baku = BahanBaku::getAllDetailedStock(3, $date_prediksi);
         $bahan_baku = $bahan_baku->sortBy('stok_saat_ini');
 
+        $nama_pembuat = Pengguna::find(session()->get('pengguna_id'));
+
         $pdf = PDF::loadView('menu.peramalan.pdf', [
             'bahan_baku' => $bahan_baku,
-            'title' => 'Peramalan Bahan Baku',
-            'bulan_prediksi' => $date_prediksi->locale('id')->monthName . ' ' . $date_prediksi->year
+            'title' => 'PERMALAN BAHAN BAKU',
+            'bulan_prediksi' => $date_prediksi->locale('id')->monthName . ' ' . $date_prediksi->year,
+            'nama_pembuat' => $nama_pembuat->nama,
         ])->setPaper('a4', 'landscape');
 
         return $pdf->stream('peramalan_' . now()->format('Y-m-d') . '.pdf');
