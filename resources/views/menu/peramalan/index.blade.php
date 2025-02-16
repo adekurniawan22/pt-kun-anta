@@ -40,22 +40,6 @@
                 background-color: #007bff;
                 border-color: #007bff;
             }
-
-            #peramalan_filter {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
-            }
-
-            .dt-buttons {
-                order: -1;
-            }
-
-            .dataTables_filter {
-                display: flex;
-                justify-content: flex-end;
-            }
         </style>
 
         <div class="row ms-0 me-1">
@@ -118,6 +102,12 @@
 
                         </table>
                     </div>
+
+                    <div class="mt-2 text-end">
+                        <button id="downloadPDF" class="btn btn-primary">
+                            <i class="fadeIn animated bx bx-download me-1"></i> Download PDF
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,6 +120,7 @@
     </script>
     <script>
         $(document).ready(function() {
+            let firstDay; // Declare firstDay in wider scope
             var urlParams = new URLSearchParams(window.location.search);
             var bulanPilih = urlParams.get('prediksi');
 
@@ -148,6 +139,23 @@
 
             var defaultDate = defaultMonth + '/' + defaultYear;
 
+            var bulanIndo = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+
+            // Function to update firstDay
+            function updateFirstDay(selectedDate) {
+                var monthYear = selectedDate.split('/');
+                var bulan = monthYear[0];
+                var tahun = monthYear[1];
+
+                var bulanAngka = bulanIndo.indexOf(bulan) + 1;
+                var formattedBulan = ("0" + bulanAngka).slice(-2);
+                firstDay = '01/' + formattedBulan + '/' + tahun;
+                return firstDay;
+            }
+
             $('#monthYearPicker').datepicker({
                 format: "MM/yyyy",
                 startView: "months",
@@ -156,10 +164,8 @@
                 language: 'id',
             }).datepicker('setDate', defaultDate);
 
-            var bulanIndo = [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ];
+            // Set initial firstDay value
+            firstDay = updateFirstDay($('#monthYearPicker').val());
 
             $('#monthYearPicker').on('changeDate', function(e) {
                 var selectedDate = $('#monthYearPicker').val();
@@ -181,29 +187,29 @@
             const role = "{{ session('role') }}";
 
             $("#peramalan").DataTable({
-                dom: "Bfrtip",
-                buttons: [{
-                    text: '<i class="fadeIn animated bx bx-download me-1"></i> Download PDF',
-                    className: "btn btn-primary text-white mb-2",
-                    orientation: "portrait",
-                    pageSize: "A4",
-                    action: function(e, dt, node, config) {
-                        // Get current selected date
-                        var selectedDate = $('#monthYearPicker').val();
-                        var monthYear = selectedDate.split('/');
-                        var bulan = monthYear[0];
-                        var tahun = monthYear[1];
+                // dom: "Bfrtip",
+                // buttons: [{
+                //     text: '<i class="fadeIn animated bx bx-download me-1"></i> Download PDF',
+                //     className: "btn btn-primary text-white mb-2",
+                //     orientation: "portrait",
+                //     pageSize: "A4",
+                //     action: function(e, dt, node, config) {
+                //         // Get current selected date
+                //         var selectedDate = $('#monthYearPicker').val();
+                //         var monthYear = selectedDate.split('/');
+                //         var bulan = monthYear[0];
+                //         var tahun = monthYear[1];
 
-                        var bulanAngka = bulanIndo.indexOf(bulan) + 1;
-                        var formattedBulan = ("0" + bulanAngka).slice(-2);
-                        var firstDay = '01/' + formattedBulan + '/' + tahun;
+                //         var bulanAngka = bulanIndo.indexOf(bulan) + 1;
+                //         var formattedBulan = ("0" + bulanAngka).slice(-2);
+                //         var firstDay = '01/' + formattedBulan + '/' + tahun;
 
-                        // Update PDF URL with prediksi parameter
-                        var pdfUrl =
-                            `${base_url}/${role}/bahan-baku/peramalan/pdf?prediksi=${firstDay}`;
-                        window.open(pdfUrl, "_blank");
-                    },
-                }],
+                //         // Update PDF URL with prediksi parameter
+                //         var pdfUrl =
+                //             `${base_url}/${role}/bahan-baku/peramalan/pdf?prediksi=${firstDay}`;
+                //         window.open(pdfUrl, "_blank");
+                //     },
+                // }],
                 oLanguage: {
                     sLengthMenu: "Tampilkan _MENU_ data",
                     sInfo: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
@@ -245,6 +251,12 @@
                         return data;
                     }
                 }]
+            });
+
+            // Add click handler for PDF button
+            $('#downloadPDF').on('click', function() {
+                var pdfUrl = `${base_url}/${role}/bahan-baku/peramalan/pdf?prediksi=${firstDay}`;
+                window.open(pdfUrl, "_blank");
             });
         });
     </script>
