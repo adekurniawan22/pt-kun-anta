@@ -40,8 +40,7 @@
                                     <th>Standarisasi</th>
                                     {{-- <th>Stok Saat Ini</th> --}}
                                     @if (session('role') != 'supervisor')
-                                        <th>Dibuat oleh</th>
-                                        <th data-sortable="false">Aksi</th>
+                                        <th data-sortable="false" style="width: 20%">Aksi</th>
                                     @endif
                                 </tr>
                             </thead>
@@ -70,17 +69,14 @@
 
                                         @if (session('role') != 'supervisor')
                                             <td>
-                                                {{ $data->pengguna->nama }}
-                                            </td>
-                                            <td>
                                                 <div class="d-flex align-items-start justify-content-start gap-3 fs-6">
                                                     <!-- Tombol Histori -->
-                                                    <button type="button"
+                                                    {{-- <button type="button"
                                                         class="btn btn-sm btn-info text-white d-flex align-items-center"
                                                         data-bs-toggle="modal" data-bs-target="#historiModal"
                                                         data-bahan-baku-id="{{ $data->bahan_baku_id }}">
                                                         <i class="bi bi-bar-chart me-1"></i> Histori
-                                                    </button>
+                                                    </button> --}}
 
                                                     <!-- Tombol Edit -->
                                                     <a href="{{ route(session()->get('role') . '.bahan_baku.edit', $data->bahan_baku_id) }}"

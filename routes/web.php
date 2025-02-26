@@ -9,6 +9,11 @@ Route::get('login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
 // Routes untuk dashboard
 Route::middleware(['auth.custom'])->group(function () {
 

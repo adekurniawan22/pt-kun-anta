@@ -17,6 +17,7 @@ class Pengguna extends Model
         'email',
         'password',
         'role',
+        'reset_token'
     ];
 
     // Relasi dengan tabel pesanan (one to many)

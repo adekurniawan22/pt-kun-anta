@@ -18,6 +18,25 @@ class PeramalanController extends Controller
 
         $bahan_baku = BahanBaku::getAllDetailedStock(3, $date_prediksi);
 
+        $bahan_baku = $bahan_baku->sort(function ($a, $b) {
+            // Check if either is below minimum stock
+            $a_below_min = $a['stok_saat_ini'] < $a['stok_minimal'];
+            $b_below_min = $b['stok_saat_ini'] < $b['stok_minimal'];
+
+            // Prioritize items below minimum stock
+            if ($a_below_min !== $b_below_min) {
+                return $b_below_min <=> $a_below_min; // true comes before false
+            }
+
+            // If both have the same status, sort by current stock
+            if ($a['stok_saat_ini'] !== $b['stok_saat_ini']) {
+                return $a['stok_saat_ini'] <=> $b['stok_saat_ini'];
+            }
+
+            // If current stock is equal, sort by product name
+            return $a['nama_bahan_baku'] <=> $b['nama_bahan_baku'];
+        });
+
         return view('menu.peramalan.index', [
             'bahan_baku' => $bahan_baku,
             'title' => self::TITLE_INDEX

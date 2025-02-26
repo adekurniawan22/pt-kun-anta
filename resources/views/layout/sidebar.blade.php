@@ -15,12 +15,12 @@
     <ul class="metismenu" id="menu">
         {{-- Role Manajer Produksi --}}
         @if (session('role') == 'manajer_produksi')
-            <li class="{{ Request::is('supervisor/dashboard*') ? 'mm-active' : '' }}">
+            {{-- <li class="{{ Request::is('supervisor/dashboard*') ? 'mm-active' : '' }}">
                 <a href="<?= url('manajer-produksi/dashboard') ?>">
                     <div class="parent-icon"><i class="bi bi-house-door"></i></div>
                     <div class="menu-title">Dashboard</div>
                 </a>
-            </li>
+            </li> --}}
             <li class="{{ Request::is('manajer/supplier*') ? 'mm-active' : '' }}">
                 <a href="{{ url('manajer/supplier') }}">
                     <div class="parent-icon"><i class="bi bi-people"></i></div>
@@ -56,22 +56,22 @@
 
         {{-- Role Supervisor --}}
         @if (session('role') == 'supervisor')
-            <li class="{{ Request::is('supervisor/dashboard*') ? 'mm-active' : '' }}">
+            {{-- <li class="{{ Request::is('supervisor/dashboard*') ? 'mm-active' : '' }}">
                 <a href="<?= url('supervisor/dashboard') ?>">
                     <div class="parent-icon"><i class="bi bi-house-door"></i></div>
                     <div class="menu-title">Dashboard</div>
                 </a>
-            </li>
+            </li> --}}
 
-            <li class="{{ Request::is('supervisor/bahan-baku*') ? 'mm-active' : '' }}">
+            <li class="{{ Request::is('supervisor/bahan-baku') || Request::is('supervisor/bahan-baku/*') && !Request::is('supervisor/bahan-baku/transaksi*') ? 'mm-active' : '' }}">
                 <a href="{{ url('supervisor/bahan-baku') }}">
                     <div class="parent-icon"><i class="bi bi-box"></i></div>
                     <div class="menu-title">Monitoring</div>
                 </a>
             </li>
-
-            <li class="{{ Request::is('supervisor/bahan-baku/transaksi*') ? 'mm-active' : '' }}">
-                <a href="<?= url('supervisor/bahan-baku/transaksi') ?>">
+        
+            <li class="{{ Request::is('supervisor/bahan-baku/transaksi') || Request::is('supervisor/bahan-baku/transaksi/*') ? 'mm-active' : '' }}">
+                <a href="{{ url('supervisor/bahan-baku/transaksi') }}">
                     <div class="parent-icon"><i class="bi bi-clock-history"></i></div>
                     <div class="menu-title">Penggunaan Bahan Baku</div>
                 </a>
@@ -125,8 +125,6 @@
                 </ul>
             </li>
         @endif
-
-
     </ul>
     <!--end navigation-->
 </aside>

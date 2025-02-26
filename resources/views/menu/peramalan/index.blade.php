@@ -561,23 +561,37 @@
                     });
                     $("#peramalan_filter").prepend($(".dt-buttons"));
                 },
-                order: [
-                    [2, 'asc']
-                ], // Mengurutkan berdasarkan kolom ke-2 (stok_saat_ini) secara ascending
-                columnDefs: [{
-                    targets: 2,
-                    type: 'num-fmt',
-                    render: function(data, type, row) {
-                        if (type === 'display') {
-                            return data;
-                        } else if (type === 'sort') {
-                            var stokSaatIni = parseInt(data.replace(/\./g, '').replace(/[^\d]/g,
-                                ''));
-                            return stokSaatIni;
-                        }
-                        return data;
-                    }
-                }]
+                // columnDefs: [{
+                //         targets: 2, // stok_saat_ini column
+                //         type: 'num-fmt',
+                //         render: function(data, type, row) {
+                //             if (type === 'display') {
+                //                 return data;
+                //             } else if (type === 'sort') {
+                //                 var stokSaatIni = parseInt(data.replace(/\./g, '').replace(/[^\d]/g,
+                //                     ''));
+                //                 return stokSaatIni;
+                //             }
+                //             return data;
+                //         }
+                //     },
+                //     {
+                //         targets: 1, // stok_minimal column
+                //         type: 'num-fmt',
+                //         render: function(data, type, row) {
+                //             if (type === 'display') {
+                //                 return data;
+                //             } else if (type === 'sort') {
+                //                 var stokMinimal = parseInt(data.replace(/\./g, '').replace(/[^\d]/g,
+                //                     ''));
+                //                 return stokMinimal;
+                //             }
+                //             return data;
+                //         }
+                //     }
+                // ],
+                // order: [],
+                ordering: false
             });
 
             // Add click handler for PDF button
